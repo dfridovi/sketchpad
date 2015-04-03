@@ -23,10 +23,10 @@
  * Other files in this project: 
  * -- point.java = a point primitive object
  * -- line.java = a line primitive object
- * -- samePoint.java = constraint object that sets two points to be identical
- * -- parallelConstraint.java = constraint object that operates on two lines
- * -- perpendicularConstraint.java = constraint object on two lines
- * -- sameLength.java = constraint object that operates on two lines
+ * -- samePointConstraint.java = constraint that makes two points identical
+ * -- parallelConstraint.java = constraint that makes lines parallel
+ * -- perpendicularConstraint.java = constraint makes lines perpendicular
+ * -- sameLengthConstraint.java = constraint that makes lines same length
  * -- optimizeGeometry.java = a class which sifts constraints and attempts
  *                            to satisfy all constraints by adjusting geometry
  *
