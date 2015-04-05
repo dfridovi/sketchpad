@@ -7,7 +7,7 @@
  * provides a method which will cause the operand to move toward the target.
  ****************************************************************************/
 
-public class SamePointConstraint {
+public class SamePointConstraint implements Constraint {
     
     private Point operand;
     private Point target;

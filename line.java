@@ -6,7 +6,7 @@
  * may later be imposed which forces it to change position.)
  ****************************************************************************/
 
-public class Line {
+public class Line implements Shape {
     
     private Point p;
     private Point q;
@@ -44,8 +44,19 @@ public class Line {
 	this.q.moveTo(this.p, angle, length);
     }
 
+    // translate by a specified delta
+    public void translate(double deltaX, double deltaY) {
+	this.p.translate(deltaX, deltaY);
+	this.q.translate(deltaX, deltaY);
+    }
+
+    // duplicate this line
+    public Line duplicate() {
+	return new Line(this.p.duplicate(), this.q.duplicate());
+    }
+
     // draw to StdDraw
     public void draw() {
-	StdDraw.line(this.p.x, this.p.y, this.q.x, this.q.y)
+	StdDraw.line(this.p.x, this.p.y, this.q.x, this.q.y);
     }
 }

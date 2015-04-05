@@ -8,7 +8,7 @@
  * the target.
  ****************************************************************************/
 
-public class SameLengthConstraint {
+public class SameLengthConstraint implements Constraint {
     
     private Line operand;
     private Line target;

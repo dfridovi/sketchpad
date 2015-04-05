@@ -6,7 +6,7 @@
  * may later be imposed which forces it to change position.)
  ****************************************************************************/
 
-public class Point {
+public class Point implements Shape {
     
     private double x;
     private double y;
@@ -49,6 +49,17 @@ public class Point {
     public void moveTo(Point p, double angle, double length) {
 	this.x = p.x + length * Math.cos(angle);
 	this.y = p.y + length * Math.sin(angle);
+    }
+
+    // translate by a specified delta
+    public void translate(double deltaX, double deltaY) {
+	this.x += deltaX;
+	this.y += deltaY;
+    }
+
+    // duplicate this point
+    public Point duplicate() {
+	return new Point(this.x, this.y);
     }
 
     // draw to StdDraw
