@@ -152,7 +152,7 @@ public class Sketch {
 	    String state = canvas.whichButton();
 	    
 	    if (state == null) continue;
-	    if (state.equals("Point"))
+	    else if (state.equals("Point"))
 		handlePoint(canvas);
 	    else if (state.equals("Line"))
 		handleLine(canvas);
