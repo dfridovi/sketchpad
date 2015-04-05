@@ -57,6 +57,8 @@ public class Line implements Shape {
 
     // draw to StdDraw
     public void draw() {
-	StdDraw.line(this.p.x, this.p.y, this.q.x, this.q.y);
+	this.p.draw();
+	this.q.draw();
+	this.p.drawLineTo(this.q);
     }
 }

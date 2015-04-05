@@ -41,7 +41,7 @@ public class Point implements Shape {
 
     // get polar angle to another point
     public double angleTo(Point p) {
-	return Math.atan2(this.slopeTo(p));
+	return Math.atan2(p.y - this.y, p.x - this.x);
     }
 
     // move to another location, a fixed length away from a given point
@@ -65,5 +65,10 @@ public class Point implements Shape {
     // draw to StdDraw
     public void draw() {
 	StdDraw.point(this.x, this.y);
+    }
+
+    // draw line to another point
+    public void drawLineTo(Point p) {
+	StdDraw.line(this.x, this.y, p.x, p.y); 
     }
 }

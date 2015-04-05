@@ -42,8 +42,11 @@
 
 public class Sketch {
 
-    // delay in polling loop
+    // constants
     private static final int delayMillis = 100;
+    private static final double halfWidth = 0.12;
+    private static final double halfHeight = 0.03;
+    private static final double margin = 0.01;
 
     // allow user to place a point on the canvas
     private static void handlePoint(Canvas canvas) {
@@ -91,59 +94,82 @@ public class Sketch {
     private static void handleSameLength(Canvas canvas) {}
 
     // helper method: select a primitive
-    private static Shape select(Canvas canvas) {}
+    private static Shape select(Canvas canvas) {return null;}
 
     // helper method: wait for mouse click
     private static void waitForMouse() {
-	while (true) {
-	    Thread.sleep(delayMillis);
-	    if (StdDraw.mousePressed()) {
-		return;
+	try {
+	    while (true) {
+		Thread.sleep(delayMillis);
+		if (StdDraw.mousePressed()) {
+		    return;
+		}
 	    }
+	} catch (Exception e) {
+	    System.err.println("Error occurred while waiting for mouse: " + 
+			       e.getMessage());
 	}
     }
 
     // implement a finite-state machine to draw different primitives
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 	
 	// set up canvas with buttons
 	Canvas canvas = new Canvas();
 
-	canvas.addButton(0.05, 0.95, 0.04, 0.02, "Point");
-	canvas.addButton(0.1, 0.95, 0.04, 0.02, "Line");
-	canvas.addButton(0.15, 0.95, 0.04, 0.02, "Composite");
-	canvas.addButton(0.2, 0.95, 0.04, 0.02, "Group");
+	canvas.addButton(margin + halfWidth, 1.0 - margin - halfHeight, 
+			 halfWidth, halfHeight, "Point");
+	canvas.addButton(-halfWidth + 2.0 * (margin + 2.0 * halfWidth), 
+			 1.0 - margin - halfHeight, 
+			 halfWidth, halfHeight, "Line");
+	canvas.addButton(-halfWidth + 3.0 * (margin + 2.0 * halfWidth), 
+			 1.0 - margin - halfHeight, 
+			 halfWidth, halfHeight, "Composite");
+	canvas.addButton(-halfWidth + 4.0 * (margin + 2.0 * halfWidth), 
+			 1.0 - margin - halfHeight, 
+			 halfWidth, halfHeight, "Group");
 
-	canvas.addButton(0.25, 0.95, 0.04, 0.02, "Same Point");
-	canvas.addButton(0.3, 0.95, 0.04, 0.02, "Parallel");
-	canvas.addButton(0.35, 0.95, 0.04, 0.02, "Perpendicular");
-	canvas.addButton(0.4, 0.95, 0.04, 0.02, "Same Length");
+	canvas.addButton(-halfWidth + 5.0 * (margin + 2.0 * halfWidth), 
+			 1.0 - margin - halfHeight, 
+			 halfWidth, halfHeight, "Same Point");
+	canvas.addButton(-halfWidth + 6.0 * (margin + 2.0 * halfWidth), 
+			 1.0 - margin - halfHeight, 
+			 halfWidth, halfHeight, "Parallel");
+	canvas.addButton(-halfWidth + 7.0 * (margin + 2.0 * halfWidth), 
+			 1.0 - margin - halfHeight, 
+			 halfWidth, halfHeight, "Perpendicular");
+	canvas.addButton(-halfWidth + 8.0 * (margin + 2.0 * halfWidth), 
+			 1.0 - margin - halfHeight, 
+			 halfWidth, halfHeight, "Same Length");
+
+	canvas.show();
 
 	// main loop
 	while (true) {
-	    Thread.sleep(delayMillis);
+	    waitForMouse();
 	    
 	    // if mouse is pressed determine which state to enter
-	    if (StdDraw.mousePressed()) {
-		String state = canvas.whichButton();
-		
-		if (state.equals("Point"))
-		    handlePoint(canvas);
-		else if (state.equals("Line"))
-		    handleLine(canvas);
-		else if (state.equals("Composite"))
-		    handleComposite(canvas);
-		else if (state.equals("Group"))
-		    handleGroup(canvas);
-		else if (state.equals("Same Point"))
-		    handleSamePoint(canvas);
-		else if (state.equals("Parallel"))
-		    handleParallel(canvas);
-		else if (state.equals("Perpendicular"))
-		    handlePerpendicular(canvas);
-		else if (state.equals("Same Length"))
-		    handleSameLength(canvas);
-	    }
+	    String state = canvas.whichButton();
+	    
+	    if (state == null) continue;
+	    if (state.equals("Point"))
+		handlePoint(canvas);
+	    else if (state.equals("Line"))
+		handleLine(canvas);
+	    else if (state.equals("Composite"))
+		handleComposite(canvas);
+	    else if (state.equals("Group"))
+		handleGroup(canvas);
+	    else if (state.equals("Same Point"))
+		handleSamePoint(canvas);
+	    else if (state.equals("Parallel"))
+		handleParallel(canvas);
+	    else if (state.equals("Perpendicular"))
+		handlePerpendicular(canvas);
+	    else if (state.equals("Same Length"))
+		handleSameLength(canvas);
+	    
+	    canvas.show();
 	}
 
     }
