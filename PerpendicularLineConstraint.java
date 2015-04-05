@@ -8,13 +8,13 @@
  * to the target.
  ****************************************************************************/
 
-public class PerpendicularConstraint implements Constraint {
+public class PerpendicularLineConstraint implements Constraint {
     
     private Line operand;
     private Line target;
 
     // initialize operand and target
-    public PerpendicularConstraint(Line operand, Line target) {
+    public PerpendicularLineConstraint(Line operand, Line target) {
 	this.operand = operand;
 	this.target = target;
     }

@@ -8,13 +8,13 @@
  * the target.
  ****************************************************************************/
 
-public class ParallelConstraint implements Constraint {
+public class ParallelLineConstraint implements Constraint {
     
     private Line operand;
     private Line target;
 
     // initialize operand and target
-    public ParallelConstraint(Line operand, Line target) {
+    public ParallelLineConstraint(Line operand, Line target) {
 	this.operand = operand;
 	this.target = target;
     }

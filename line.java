@@ -2,7 +2,7 @@
  * Author: David Fridovich-Keil
  * Course: ELE 583
  *
- * This file implements a mutable line object. (Mutable, because a constraint
+ * This file implements a mutable line object. (Mutable because a constraint
  * may later be imposed which forces it to change position.)
  ****************************************************************************/
 
