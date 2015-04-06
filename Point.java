@@ -32,6 +32,23 @@ public class Point implements Shape {
 	return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
 
+    // get Euclidean distance to particular location (not a point object)
+    public double distTo(double x, double y) {
+	double deltaX = x - this.x;
+	double deltaY = y - this.y;
+	return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+
+    // get delta x to another point
+    public double deltaX(Point p) {
+	return p.x - this.x;
+    }
+
+    // get delta y to another point
+    public double deltaY(Point p) {
+	return p.y - this.y;
+    }
+    
     // get slope from this point to another point
     public double slopeTo(Point p) {
 	double deltaX = p.x - this.x;

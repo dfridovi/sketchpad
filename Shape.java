@@ -11,5 +11,6 @@ public interface Shape {
     // must be able to implement these functions
     void translate(double deltaX, double deltaY);
     Shape duplicate();
+    double distTo(double x, double y);
     void draw();
 }

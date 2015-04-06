@@ -32,6 +32,20 @@ public class Composite implements Shape {
 	return dup;
     }
 
+    // get distance from a point to the nearest part of this shape
+    public double distTo(double x, double y) {
+	double min_dist = Double.POSITIVE_INFINITY;
+	
+	for (Shape s : this.shapes) {
+	    double dist = s.distTo(x, y);
+	    
+	    if (dist < min_dist)
+		min_dist = dist;
+	}
+
+	return min_dist;
+    }
+
     // draw to StdDraw
     public void draw() {
 	for (Shape s : this.shapes)

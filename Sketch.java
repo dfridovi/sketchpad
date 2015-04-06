@@ -47,6 +47,7 @@ public class Sketch {
     private static final double halfWidth = 0.12;
     private static final double halfHeight = 0.03;
     private static final double margin = 0.01;
+    private static final double tolerance = 0.05;
 
     // allow user to place a point on the canvas
     private static void handlePoint(Canvas canvas) {
@@ -94,7 +95,14 @@ public class Sketch {
     private static void handleSameLength(Canvas canvas) {}
 
     // helper method: select a primitive
-    private static Shape select(Canvas canvas) {return null;}
+    private static Shape select(Canvas canvas) {
+	
+	// wait for mouse click
+	waitForMouse();
+	
+	// find closest shape within tolerance
+	return canvas.findNearestShape(tolerance);
+    }
 
     // helper method: wait for mouse click
     private static void waitForMouse() {
