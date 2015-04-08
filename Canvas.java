@@ -60,7 +60,7 @@ public class Canvas {
 	double x = StdDraw.mouseX();
 	double y = StdDraw.mouseY();
 	double min_dist = Double.POSITIVE_INFINITY;
-	double nearest = null;
+        Shape nearest = null;
 
 	for (Shape s : this.shapes) {
 	    double dist = s.distTo(x, y);
@@ -72,7 +72,9 @@ public class Canvas {
 	}
 
 	if (min_dist <= tolerance)
-	    return s;
+	    return nearest;
+	else 
+	    return null;
     }
 
     // optimize geometry
