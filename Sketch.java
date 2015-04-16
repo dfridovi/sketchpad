@@ -83,16 +83,72 @@ public class Sketch {
     private static void handleGroup(Canvas canvas) {}
 
     // handle same point constraint
-    private static void handleSamePoint(Canvas canvas) {}
+    private static void handleSamePoint(Canvas canvas) {
+
+	// capture two mouse clicks with select(), then create a constraint
+	// and add to the canvas
+	Shape first_click = select(canvas);
+	if (first_click == null || !first_click.getClass().equals(Point.class))
+	    return;
+	Shape second_click = select(canvas);
+	if (second_click == null || !second_click.getClass().equals(Point.class))
+	    return;
+	
+	SamePointConstraint sp = new
+	    SamePointConstraint((Point) first_click, (Point) second_click);
+	canvas.addConstraint(sp);
+    }
 
     // handle parallel lines constraint
-    private static void handleParallel(Canvas canvas) {}
+    private static void handleParallel(Canvas canvas) {
+	
+	// capture two mouse clicks with select(), then create a constraint
+	// and add to the canvas
+	Shape first_click = select(canvas);
+	if (first_click == null || !first_click.getClass().equals(Line.class))
+	    return;
+	Shape second_click = select(canvas);
+	if (second_click == null || !second_click.getClass().equals(Line.class))
+	    return;
+	
+	ParallelLineConstraint para = new
+	    ParallelLineConstraint((Line) first_click, (Line) second_click);
+	canvas.addConstraint(para);
+    }
 
     // handle perpendicular lines constraint
-    private static void handlePerpendicular(Canvas canvas) {}
+    private static void handlePerpendicular(Canvas canvas) {
+
+	// capture two mouse clicks with select(), then create a constraint
+	// and add to the canvas
+	Shape first_click = select(canvas);
+	if (first_click == null || !first_click.getClass().equals(Line.class))
+	    return;
+	Shape second_click = select(canvas);
+	if (second_click == null || !second_click.getClass().equals(Line.class))
+	    return;
+	
+	PerpendicularLineConstraint perp = new
+	    PerpendicularLineConstraint((Line) first_click, (Line) second_click);
+	canvas.addConstraint(perp);
+    }
 
     // handle same length constraint
-    private static void handleSameLength(Canvas canvas) {}
+    private static void handleSameLength(Canvas canvas) {
+
+	// capture two mouse clicks with select(), then create a constraint
+	// and add to the canvas
+	Shape first_click = select(canvas);
+	if (first_click == null || !first_click.getClass().equals(Line.class))
+	    return;
+	Shape second_click = select(canvas);
+	if (second_click == null || !second_click.getClass().equals(Line.class))
+	    return;
+	
+	SameLengthConstraint sl = new
+	    SameLengthConstraint((Line) first_click, (Line) second_click);
+	canvas.addConstraint(sl);
+    }
 
     // helper method: select a primitive
     private static Shape select(Canvas canvas) {
@@ -177,6 +233,7 @@ public class Sketch {
 	    else if (state.equals("Same Length"))
 		handleSameLength(canvas);
 	    
+	    canvas.optimizeGeometry();
 	    canvas.show();
 	}
 

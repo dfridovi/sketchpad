@@ -20,7 +20,7 @@ public class Canvas {
 	this.shapes = new Queue<Shape>();
 	this.constraints = new Queue<Constraint>();
 
-	StdDraw.setCanvasSize(1024, 512);
+	StdDraw.setCanvasSize(1200, 600);
 	StdDraw.setXscale(0.0, 2.0);
 	StdDraw.setYscale(0.0, 1.0);
 
@@ -78,7 +78,10 @@ public class Canvas {
     }
 
     // optimize geometry
-    public void optimizeGeometry() {}
+    public void optimizeGeometry() {
+	for (Constraint c : this.constraints)
+	    c.execute();
+    }
 
     // draw current state
     public void show() {
