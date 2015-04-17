@@ -41,6 +41,7 @@
  ***************************************************************************/
 
 import java.awt.event.KeyEvent;
+import java.util.TreeMap;
 
 public class Sketch {
 
@@ -50,6 +51,11 @@ public class Sketch {
     private static final double halfHeight = 0.03;
     private static final double margin = 0.01;
     private static final double tolerance = 0.05;
+
+    // other global variables
+    private static int compositeID = 1;
+    private static TreeMap<String, Composite> compositeMap = 
+	new TreeMap<String, Composite>();
 
     // allow user to place a point on the canvas
     private static void handlePoint(Canvas canvas) {
@@ -75,18 +81,31 @@ public class Sketch {
 	// create line and add to canvas
 	Line l = new Line(p, q);
 	canvas.addShape(l);
-
-	// also add points themselves to canvas
-	canvas.addShape(p);
-	canvas.addShape(q);
 	canvas.show();
     }
 
     // handle all other composite collections of primitives
-    private static void handleComposite(Canvas canvas) {}
+    private static void handleComposite(Canvas canvas, Button b) {
+	
+	// show sub-menu, and wait for click
+	b.drawFamily();
+	waitForMouse();
+
+	// get clicked button, and map to a composite
+	Button clicked = b.getClickedChild();
+	if (clicked == null) return;
+
+	Composite c = compositeMap.get(clicked.name);
+	if (c == null) return;
+
+	// duplicate this composite, translate, and add to canvas
+	c = c.duplicate();
+	c.translate(0.1, 0.1);
+	canvas.addShape(c);
+    }
 
     // allow user to select a group of primitives and bundle into a composite
-    private static void handleGroup(Canvas canvas) {
+    private static void handleGroup(Canvas canvas, Button b) {
 	Queue<Shape> group = new Queue<Shape>();
 
 	// capture mouse clicks with select() until the user presses 'enter',
@@ -104,7 +123,13 @@ public class Sketch {
 		}
 	    }
 	
-	    canvas.addShape(new Composite(group));
+	    // create new composite, add to map, and make new button
+	    Composite c = new Composite(group);
+	    String name = "Composite #" + Integer.toString(compositeID++);
+	    canvas.addShape(c);
+	    compositeMap.put(name, c);
+	    b.procreate(name);
+
 	} catch (Exception e) {
 	    System.err.println("Error occurred while waiting for input: " + 
 			       e.getMessage());
@@ -308,9 +333,9 @@ public class Sketch {
 	    else if (state.equals(line))
 		handleLine(canvas);
 	    else if (state.equals(composite))
-		handleComposite(canvas);
+		handleComposite(canvas, composite);
 	    else if (state.equals(group))
-		handleGroup(canvas);
+		handleGroup(canvas, composite);
 	    else if (state.equals(same_pt))
 		handleSamePoint(canvas);
 	    else if (state.equals(para))

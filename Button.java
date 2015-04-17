@@ -19,7 +19,7 @@ public class Button {
     private final double center_y;
     private final double half_width;
     private final double half_height;
-    private final String name;
+    public final String name;
     private boolean highlighted;
 
     // create a new button
@@ -33,12 +33,34 @@ public class Button {
 	this.highlighted = false;
     }
 
-    // create a new child button
-    public Button procreate(String name) {
-	this.child = new Button(this.center_x, 
-				this.center_y - 2 * this.half_height - margin, 
-				this.half_width, this.half_height, name);
-	return this.child;
+    // create a new child button at the end of this button's youngest descendant
+    public void procreate(String name) {
+	Button b = this;
+	while (b.child != null)
+	    b = b.child;
+	b.child = new Button(this.center_x, 
+			     this.center_y - 2 * this.half_height - margin, 
+			     this.half_width, this.half_height, name);
+    }
+
+    // draw family tree to StdDraw
+    public void drawFamily() {
+	Button b = this;
+	while (b != null) {
+	    b.draw();
+	    b = b.child;
+	}
+    }
+
+    // return which child is clicked
+    public Button getClickedChild() {
+	Button b = this.child;
+	while (b != null) {
+	    if (b.isPressed()) return b;
+	    b = b.child;
+	}
+
+	return null;
     }
 
     // draw to StdDraw

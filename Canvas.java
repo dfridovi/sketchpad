@@ -87,17 +87,16 @@ public class Canvas {
         Point nearest = null;
 
 	for (Shape s : this.shapes) {
-
-	    if (!s.getClass().equals(Point.class)) 
-		continue;
+	    for (Point p : s.getPoints()) {
+		
+		double dist = p.distTo(x, y);
 	    
-	    double dist = s.distTo(x, y);
-	    
-	    if (dist < min_dist) {
-		min_dist = dist;
-		nearest = (Point) s;
+		if (dist < min_dist) {
+		    min_dist = dist;
+		    nearest = p;
+		}
 	    }
-     	}
+	}
 
 	if (min_dist <= tolerance)
 	    return nearest;

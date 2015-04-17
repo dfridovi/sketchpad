@@ -88,6 +88,14 @@ public class Line implements Shape {
 	}
     }
 
+    // return a queue with both points in it
+    public Queue<Point> getPoints() {
+	Queue<Point> iter = new Queue<Point>();
+	iter.enqueue(this.p);
+	iter.enqueue(this.q);
+	return iter;
+    }
+
     // draw to StdDraw
     public void draw() {
 	if (this.highlight)

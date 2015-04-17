@@ -9,8 +9,8 @@
 public class Composite implements Shape {
 
     // make a queue for each supported type
-    private Queue<Shape> shapes;
-
+    private final Queue<Shape> shapes;
+    
     // initialize instance variables
     public Composite(Queue<Shape> shapes) {
 	this.shapes = shapes;
@@ -30,6 +30,17 @@ public class Composite implements Shape {
 
 	Composite dup = new Composite(dup_shapes);
 	return dup;
+    }
+
+    // return a queue of points in this composite
+    public Queue<Point> getPoints() {
+	Queue<Point> iter = new Queue<Point>();
+	for (Shape s : this.shapes) {
+	    for (Point p : s.getPoints())
+		iter.enqueue(p);
+	}
+
+	return iter;
     }
 
     // get distance from a point to the nearest part of this shape

@@ -87,6 +87,13 @@ public class Point implements Shape {
 	return new Point(this.x, this.y);
     }
 
+    // return a queue with only this point in it
+    public Queue<Point> getPoints() {
+	Queue<Point> iter = new Queue<Point>();
+	iter.enqueue(this);
+	return iter;
+    }
+
     // draw to StdDraw
     public void draw() {
 	if (this.highlight) {

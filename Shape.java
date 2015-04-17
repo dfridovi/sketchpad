@@ -11,6 +11,7 @@ public interface Shape {
     // must be able to implement these functions
     void translate(double deltaX, double deltaY);
     Shape duplicate();
+    Queue<Point> getPoints();
     double distTo(double x, double y);
     void draw();
     void highlight();
