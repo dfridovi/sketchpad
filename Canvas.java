@@ -79,6 +79,32 @@ public class Canvas {
 	    return null;
     }
 
+    // find nearest point to mouse, within specified tolerance
+    public Point findNearestPoint(double tolerance) {
+	double x = StdDraw.mouseX();
+	double y = StdDraw.mouseY();
+	double min_dist = Double.POSITIVE_INFINITY;
+        Point nearest = null;
+
+	for (Shape s : this.shapes) {
+
+	    if (!s.getClass().equals(Point.class)) 
+		continue;
+	    
+	    double dist = s.distTo(x, y);
+	    
+	    if (dist < min_dist) {
+		min_dist = dist;
+		nearest = (Point) s;
+	    }
+     	}
+
+	if (min_dist <= tolerance)
+	    return nearest;
+	else 
+	    return null;
+    }
+
     // optimize geometry
     public void optimizeGeometry() {
 	for (Constraint c : this.constraints)

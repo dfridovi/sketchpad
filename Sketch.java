@@ -75,6 +75,10 @@ public class Sketch {
 	// create line and add to canvas
 	Line l = new Line(p, q);
 	canvas.addShape(l);
+
+	// also add points themselves to canvas
+	canvas.addShape(p);
+	canvas.addShape(q);
 	canvas.show();
     }
 
@@ -112,20 +116,18 @@ public class Sketch {
 
 	// capture two mouse clicks with select(), then create a constraint
 	// and add to the canvas
-	Shape first_click = select(canvas);
-	if (first_click == null || !first_click.getClass().equals(Point.class))
-	    return;
+	Point first_click = selectPoint(canvas);
+	if (first_click == null) return;
 	first_click.highlight();
 	canvas.show();
 
-	Shape second_click = select(canvas);
-	if (second_click == null || !second_click.getClass().equals(Point.class))
-	    return;
+	Point second_click = selectPoint(canvas);
+	if (second_click == null) return;
 	second_click.highlight();
 	canvas.show();
 
-	SamePointConstraint sp = new
-	    SamePointConstraint((Point) first_click, (Point) second_click);
+	SamePointConstraint sp = new 
+	    SamePointConstraint(first_click, second_click);
 	canvas.addConstraint(sp);
 
 	first_click.unhighlight();
@@ -216,6 +218,17 @@ public class Sketch {
 	// find closest shape within tolerance
 	return canvas.findNearestShape(tolerance);
     }
+
+    // helper method: select a point
+    private static Point selectPoint(Canvas canvas) {
+	
+	// wait for mouse click
+	waitForMouse();
+	
+	// find closest shape within tolerance
+	return canvas.findNearestPoint(tolerance);
+    }
+
 
     // helper method: wait for mouse click
     private static void waitForMouse() {

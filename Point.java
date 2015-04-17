@@ -70,7 +70,7 @@ public class Point implements Shape {
 	this.y = p.y + length * Math.sin(angle);
     }
 
-    // move to location of another point
+    // make this point the same as another point
     public void moveTo(Point p) {
 	this.x = p.x;
 	this.y = p.y;
