@@ -12,6 +12,7 @@ public interface Shape {
     void translate(double deltaX, double deltaY);
     Shape duplicate();
     Queue<Point> getPoints();
+    void setPoint(Point operand, Point target);
     double distTo(double x, double y);
     void draw();
     void highlight();

@@ -88,6 +88,12 @@ public class Line implements Shape {
 	}
     }
 
+    // check if this line contains a point and if so, replace with target
+    public void setPoint(Point operand, Point target) {
+	if (this.p.equals(operand)) this.p = target;
+	if (this.q.equals(operand)) this.q = target;
+    }
+
     // return a queue with both points in it
     public Queue<Point> getPoints() {
 	Queue<Point> iter = new Queue<Point>();

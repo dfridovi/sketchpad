@@ -11,15 +11,18 @@ public class SamePointConstraint implements Constraint {
     
     private Point operand;
     private Point target;
+    private Canvas canvas;
 
     // initialize the two points
-    public SamePointConstraint(Point operand, Point target) {
+    public SamePointConstraint(Point operand, Point target, Canvas canvas) {
 	this.operand = operand;
 	this.target = target;
+	this.canvas = canvas;
     }
 
-    // move operand to target
+    // search through every shape on the canvas and replace instances
+    // of the operand point with references to the target point
     public void execute() {
-	this.operand.moveTo(this.target);
+	this.canvas.replacePoints(this.operand, this.target);
     }
 }

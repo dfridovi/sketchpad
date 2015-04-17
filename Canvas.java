@@ -104,6 +104,12 @@ public class Canvas {
 	    return null;
     }
 
+    // search all shapes and call setPoint()
+    public void replacePoints(Point operand, Point target) {
+	for (Shape s : this.shapes)
+	    s.setPoint(operand, target);
+    }
+
     // optimize geometry
     public void optimizeGeometry() {
 	for (Constraint c : this.constraints)

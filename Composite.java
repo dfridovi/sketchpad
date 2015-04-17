@@ -43,6 +43,13 @@ public class Composite implements Shape {
 	return iter;
     }
 
+    // check if any sub-shape contains the operand point and if so replace
+    // with the target point
+    public void setPoint(Point operand, Point target) {
+	for (Shape s : this.shapes)
+	    s.setPoint(operand, target);
+    }
+
     // get distance from a point to the nearest part of this shape
     public double distTo(double x, double y) {
 	double min_dist = Double.POSITIVE_INFINITY;

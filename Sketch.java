@@ -118,8 +118,11 @@ public class Sketch {
 		    Shape click = canvas.findNearestShape(tolerance);
 		    if (click == null)
 			System.out.println("ERROR: no shape returned.");
-		    else
+		    else {
+			click.highlight();
+			canvas.show();
 			group.enqueue(click);
+		    }
 		}
 	    }
 	
@@ -130,6 +133,10 @@ public class Sketch {
 	    compositeMap.put(name, c);
 	    b.procreate(name);
 
+	    // unhighlight all shapes in group
+	    for (Shape s : group)
+		s.unhighlight();
+	    
 	} catch (Exception e) {
 	    System.err.println("Error occurred while waiting for input: " + 
 			       e.getMessage());
@@ -151,8 +158,8 @@ public class Sketch {
 	second_click.highlight();
 	canvas.show();
 
-	SamePointConstraint sp = new 
-	    SamePointConstraint(first_click, second_click);
+	SamePointConstraint sp = 
+	    new SamePointConstraint(first_click, second_click, canvas);
 	canvas.addConstraint(sp);
 
 	first_click.unhighlight();

@@ -71,9 +71,10 @@ public class Point implements Shape {
     }
 
     // make this point the same as another point
-    public void moveTo(Point p) {
-	this.x = p.x;
-	this.y = p.y;
+    public void setPoint(Point operand, Point target) {
+	if (!this.equals(operand)) return;
+	this.x = target.x;
+	this.y = target.y;
     }
 
     // translate by a specified delta
