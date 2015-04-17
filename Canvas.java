@@ -39,18 +39,20 @@ public class Canvas {
     }
 
     // add a button
-    public void addButton(double center_x, double center_y, 
-			  double half_width, double half_height, String name) {
-	this.buttons.enqueue(new Button(center_x, center_y, 
-					half_width, half_height, name));
+    public Button addButton(double center_x, double center_y, 
+			    double half_width, double half_height, String name) {
+	Button b = new Button(center_x, center_y, 
+			      half_width, half_height, name);
+	this.buttons.enqueue(b);
+	return b;
     }
 
-    // return the name of whichever button is being pressed, or null if
+    // return whichever button is being pressed, or null if
     // no button is currently being pressed
-    public String whichButton() {
+    public Button whichButton() {
 	for (Button b : this.buttons) {
 	    if (b.isPressed())
-		return b.name;
+		return b;
 	}
 	return null;
     }

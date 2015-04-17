@@ -10,11 +10,13 @@ public class Line implements Shape {
     
     private Point p;
     private Point q;
+    private boolean highlight;
 
     // initialize this line with two endpoints
     public Line(Point p, Point q) {
 	this.p = p;
 	this.q = q;
+	this.highlight = false;
     }
 
     // make parallel to another line, while maintaining constant length
@@ -88,8 +90,24 @@ public class Line implements Shape {
 
     // draw to StdDraw
     public void draw() {
+	if (this.highlight)
+	    StdDraw.setPenColor(StdDraw.ORANGE);
+	
 	this.p.draw();
 	this.q.draw();
 	this.p.drawLineTo(this.q);
+	
+	if (this.highlight)
+	    StdDraw.setPenColor();
+    }
+
+    // highlight orange
+    public void highlight() {
+	this.highlight = true;
+    }
+
+    // highlight orange
+    public void unhighlight() {
+	this.highlight = false;
     }
 }

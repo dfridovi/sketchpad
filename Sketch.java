@@ -40,6 +40,8 @@
  * they will affect the correct primitives.
  ***************************************************************************/
 
+import java.awt.event.KeyEvent;
+
 public class Sketch {
 
     // constants
@@ -80,7 +82,30 @@ public class Sketch {
     private static void handleComposite(Canvas canvas) {}
 
     // allow user to select a group of primitives and bundle into a composite
-    private static void handleGroup(Canvas canvas) {}
+    private static void handleGroup(Canvas canvas) {
+	Queue<Shape> group = new Queue<Shape>();
+
+	// capture mouse clicks with select() until the user presses 'enter',
+	// then create a composite shape and add to the canvas
+	try {
+	    while (!StdDraw.isKeyPressed(KeyEvent.VK_ENTER)) {
+		Thread.sleep(delayMillis);
+		
+		if (StdDraw.mousePressed()) {
+		    Shape click = canvas.findNearestShape(tolerance);
+		    if (click == null)
+			System.out.println("ERROR: no shape returned.");
+		    else
+			group.enqueue(click);
+		}
+	    }
+	
+	    canvas.addShape(new Composite(group));
+	} catch (Exception e) {
+	    System.err.println("Error occurred while waiting for input: " + 
+			       e.getMessage());
+	}
+    }
 
     // handle same point constraint
     private static void handleSamePoint(Canvas canvas) {
@@ -90,13 +115,21 @@ public class Sketch {
 	Shape first_click = select(canvas);
 	if (first_click == null || !first_click.getClass().equals(Point.class))
 	    return;
+	first_click.highlight();
+	canvas.show();
+
 	Shape second_click = select(canvas);
 	if (second_click == null || !second_click.getClass().equals(Point.class))
 	    return;
-	
+	second_click.highlight();
+	canvas.show();
+
 	SamePointConstraint sp = new
 	    SamePointConstraint((Point) first_click, (Point) second_click);
 	canvas.addConstraint(sp);
+
+	first_click.unhighlight();
+	second_click.unhighlight();
     }
 
     // handle parallel lines constraint
@@ -107,13 +140,21 @@ public class Sketch {
 	Shape first_click = select(canvas);
 	if (first_click == null || !first_click.getClass().equals(Line.class))
 	    return;
+	first_click.highlight();
+	canvas.show();
+
 	Shape second_click = select(canvas);
 	if (second_click == null || !second_click.getClass().equals(Line.class))
 	    return;
+	second_click.highlight();
+	canvas.show();
 	
 	ParallelLineConstraint para = new
 	    ParallelLineConstraint((Line) first_click, (Line) second_click);
 	canvas.addConstraint(para);
+
+	first_click.unhighlight();
+	second_click.unhighlight();
     }
 
     // handle perpendicular lines constraint
@@ -124,13 +165,21 @@ public class Sketch {
 	Shape first_click = select(canvas);
 	if (first_click == null || !first_click.getClass().equals(Line.class))
 	    return;
+	first_click.highlight();
+	canvas.show();
+
 	Shape second_click = select(canvas);
 	if (second_click == null || !second_click.getClass().equals(Line.class))
 	    return;
+	first_click.highlight();
+	canvas.show();
 	
 	PerpendicularLineConstraint perp = new
 	    PerpendicularLineConstraint((Line) first_click, (Line) second_click);
 	canvas.addConstraint(perp);
+
+	first_click.unhighlight();
+	second_click.unhighlight();
     }
 
     // handle same length constraint
@@ -141,13 +190,21 @@ public class Sketch {
 	Shape first_click = select(canvas);
 	if (first_click == null || !first_click.getClass().equals(Line.class))
 	    return;
+	first_click.highlight();
+	canvas.show();
+
 	Shape second_click = select(canvas);
 	if (second_click == null || !second_click.getClass().equals(Line.class))
 	    return;
+	second_click.highlight();
+	canvas.show();
 	
 	SameLengthConstraint sl = new
 	    SameLengthConstraint((Line) first_click, (Line) second_click);
 	canvas.addConstraint(sl);
+
+	first_click.unhighlight();
+	second_click.unhighlight();
     }
 
     // helper method: select a primitive
@@ -181,30 +238,38 @@ public class Sketch {
 	// set up canvas with buttons
 	Canvas canvas = new Canvas();
 
-	canvas.addButton(margin + halfWidth, 1.0 - margin - halfHeight, 
-			 halfWidth, halfHeight, "Point");
-	canvas.addButton(-halfWidth + 2.0 * (margin + 2.0 * halfWidth), 
-			 1.0 - margin - halfHeight, 
-			 halfWidth, halfHeight, "Line");
-	canvas.addButton(-halfWidth + 3.0 * (margin + 2.0 * halfWidth), 
-			 1.0 - margin - halfHeight, 
-			 halfWidth, halfHeight, "Composite");
-	canvas.addButton(-halfWidth + 4.0 * (margin + 2.0 * halfWidth), 
-			 1.0 - margin - halfHeight, 
-			 halfWidth, halfHeight, "Group");
+	Button point = canvas.addButton(margin + halfWidth, 
+					1.0 - margin - halfHeight, 
+					halfWidth, halfHeight, "Point");
+	Button line = canvas.addButton(-halfWidth + 2.0 * 
+				       (margin + 2.0 * halfWidth), 
+				       1.0 - margin - halfHeight, 
+				       halfWidth, halfHeight, "Line");
+	Button composite = canvas.addButton(-halfWidth + 3.0 * 
+					    (margin + 2.0 * halfWidth), 
+					    1.0 - margin - halfHeight, 
+					    halfWidth, halfHeight, "Composite");
+	Button group = canvas.addButton(-halfWidth + 4.0 * 
+					(margin + 2.0 * halfWidth), 
+					1.0 - margin - halfHeight, 
+					halfWidth, halfHeight, "Group");
 
-	canvas.addButton(-halfWidth + 5.0 * (margin + 2.0 * halfWidth), 
-			 1.0 - margin - halfHeight, 
-			 halfWidth, halfHeight, "Same Point");
-	canvas.addButton(-halfWidth + 6.0 * (margin + 2.0 * halfWidth), 
-			 1.0 - margin - halfHeight, 
-			 halfWidth, halfHeight, "Parallel");
-	canvas.addButton(-halfWidth + 7.0 * (margin + 2.0 * halfWidth), 
-			 1.0 - margin - halfHeight, 
-			 halfWidth, halfHeight, "Perpendicular");
-	canvas.addButton(-halfWidth + 8.0 * (margin + 2.0 * halfWidth), 
-			 1.0 - margin - halfHeight, 
-			 halfWidth, halfHeight, "Same Length");
+	Button same_pt = canvas.addButton(-halfWidth + 5.0 * 
+					  (margin + 2.0 * halfWidth), 
+					  1.0 - margin - halfHeight, 
+					  halfWidth, halfHeight, "Same Point");
+	Button para = canvas.addButton(-halfWidth + 6.0 * 
+					   (margin + 2.0 * halfWidth), 
+					   1.0 - margin - halfHeight, 
+					   halfWidth, halfHeight, "Parallel");
+	Button perp = canvas.addButton(-halfWidth + 7.0 * 
+				       (margin + 2.0 * halfWidth), 
+				       1.0 - margin - halfHeight, 
+				       halfWidth, halfHeight, "Perpendicular");
+	Button same_len = canvas.addButton(-halfWidth + 8.0 * 
+					   (margin + 2.0 * halfWidth), 
+					   1.0 - margin - halfHeight, 
+					   halfWidth, halfHeight, "Same Length");
 
 	canvas.show();
 
@@ -213,26 +278,37 @@ public class Sketch {
 	    waitForMouse();
 	    
 	    // if mouse is pressed determine which state to enter
-	    String state = canvas.whichButton();
+	    Button state = canvas.whichButton();
+
+	    // wait for user to release mouse
+	    while (StdDraw.mousePressed()); 
 	    
 	    if (state == null) continue;
-	    else if (state.equals("Point"))
+	    
+	    // highlight button
+	    state.highlight();
+	    canvas.show();
+
+	    // handle states
+	    if (state.equals(point))
 		handlePoint(canvas);
-	    else if (state.equals("Line"))
+	    else if (state.equals(line))
 		handleLine(canvas);
-	    else if (state.equals("Composite"))
+	    else if (state.equals(composite))
 		handleComposite(canvas);
-	    else if (state.equals("Group"))
+	    else if (state.equals(group))
 		handleGroup(canvas);
-	    else if (state.equals("Same Point"))
+	    else if (state.equals(same_pt))
 		handleSamePoint(canvas);
-	    else if (state.equals("Parallel"))
+	    else if (state.equals(para))
 		handleParallel(canvas);
-	    else if (state.equals("Perpendicular"))
+	    else if (state.equals(perp))
 		handlePerpendicular(canvas);
-	    else if (state.equals("Same Length"))
+	    else if (state.equals(same_len))
 		handleSameLength(canvas);
 	    
+	    // update geometry and show
+	    state.unhighlight();
 	    canvas.optimizeGeometry();
 	    canvas.show();
 	}

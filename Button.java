@@ -19,7 +19,8 @@ public class Button {
     private final double center_y;
     private final double half_width;
     private final double half_height;
-    public final String name;
+    private final String name;
+    private boolean highlighted;
 
     // create a new button
     public Button(double center_x, double center_y, 
@@ -29,6 +30,7 @@ public class Button {
 	this.half_width = half_width;
 	this.half_height = half_height;
 	this.name = name;
+	this.highlighted = false;
     }
 
     // create a new child button
@@ -41,9 +43,19 @@ public class Button {
 
     // draw to StdDraw
     public void draw() {
-	StdDraw.rectangle(this.center_x, this.center_y, 
-			  this.half_width, this.half_height);
-	StdDraw.text(this.center_x, this.center_y, this.name);
+	if (this.highlighted) {
+	    StdDraw.setPenRadius();
+	    StdDraw.setPenColor(StdDraw.ORANGE);
+	    StdDraw.filledRectangle(this.center_x, this.center_y, 
+				    this.half_width, this.half_height);
+	    StdDraw.setPenColor();
+	    StdDraw.text(this.center_x, this.center_y, this.name);
+	    StdDraw.setPenRadius(0.005);
+	} else {
+	    StdDraw.rectangle(this.center_x, this.center_y, 
+			      this.half_width, this.half_height);
+	    StdDraw.text(this.center_x, this.center_y, this.name);
+	}
     }
 
     // check if mouse is currently clicking this button or any of its children
@@ -59,5 +71,22 @@ public class Button {
 	    return true;
 	else
 	    return false;
+    }
+
+    // check if this button is the same as another button
+    public boolean equals(Button b) {
+	if (this.name.equals(b.name)) 
+	    return true;
+	return false;
+    }
+
+    // highlight this button orange
+    public void highlight() {
+	this.highlighted = true;
+    }
+
+    // unhighlight this button
+    public void unhighlight() {
+	this.highlighted = false;
     }
 }

@@ -10,11 +10,13 @@ public class Point implements Shape {
     
     private double x;
     private double y;
+    private boolean highlight;
 
     // initialize this point
     public Point(double x, double y) {
 	this.x = x;
 	this.y = y;
+	this.highlight = false;
     }
 
     // compare to another point
@@ -87,7 +89,27 @@ public class Point implements Shape {
 
     // draw to StdDraw
     public void draw() {
-	StdDraw.point(this.x, this.y);
+	if (this.highlight) {
+	    StdDraw.setPenRadius(0.02);
+	    StdDraw.setPenColor(StdDraw.ORANGE);
+	    StdDraw.point(this.x, this.y);
+	    StdDraw.setPenRadius(0.005);
+	    StdDraw.setPenColor();
+	} else {
+	    StdDraw.setPenRadius(0.02);
+	    StdDraw.point(this.x, this.y);
+	    StdDraw.setPenRadius(0.005);
+	}
+    }
+
+    // highlight orange
+    public void highlight() {
+	this.highlight = true;
+    }
+
+    // unhighlight
+    public void unhighlight() {
+	this.highlight = false;
     }
 
     // draw line to another point

@@ -51,4 +51,16 @@ public class Composite implements Shape {
 	for (Shape s : this.shapes)
 	    s.draw();
     }
+
+    // highlight orange
+    public void highlight() {
+	for (Shape s : this.shapes)
+	    s.highlight();
+    }
+
+    // unhighlight
+    public void unhighlight() {
+	for (Shape s : this.shapes)
+	    s.unhighlight();
+    }
 }

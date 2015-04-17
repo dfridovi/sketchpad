@@ -13,4 +13,6 @@ public interface Shape {
     Shape duplicate();
     double distTo(double x, double y);
     void draw();
+    void highlight();
+    void unhighlight();
 }
