@@ -25,4 +25,8 @@ public class SamePointConstraint implements Constraint {
     public void execute() {
 	this.canvas.replacePoints(this.operand, this.target);
     }
+
+    // return operand, target
+    public Point operand() {return this.operand;} 
+    public Point target() {return this.target;} 
 }

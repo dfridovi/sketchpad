@@ -6,7 +6,7 @@
  * may later be imposed which forces it to change position.)
  ****************************************************************************/
 
-public class Line implements Shape {
+public class Line implements Shape, Comparable<Line> {
     
     private Point p;
     private Point q;
@@ -50,6 +50,18 @@ public class Line implements Shape {
     public void translate(double deltaX, double deltaY) {
 	this.p.translate(deltaX, deltaY);
 	this.q.translate(deltaX, deltaY);
+    }
+
+    // comparable interface
+    public int compareTo(Line other) {
+	
+	// order by magnitude (arbitrary)
+	double this_len = this.p.distTo(this.q);
+	double other_len = other.p.distTo(other.q);
+
+	if (this_len < other_len) return -1;
+	if (this_len == other_len) return 0;
+	return 1;
     }
 
     // duplicate this line

@@ -8,17 +8,36 @@
  * (for composite selection).
  ****************************************************************************/
 
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 public class Canvas {
 
+    // store buttons and shapes
     private Queue<Button> buttons;
     private Queue<Shape> shapes; 
-    private Queue<Constraint> constraints;
 
+    // store constraints
+    private Queue<SameLengthConstraint> sl;
+    private Queue<SamePointConstraint> sp;
+    private Queue<ParallelLineConstraint> para;
+    private Queue<PerpendicularLineConstraint> perp;
+
+    // keep a graph for parallel and perpendicular constraints
+    private TreeMap<Line, TreeSet<Line>> parallel_lines;
+    private TreeMap<Line, TreeSet<Line>> perpendicular_lines;
+    
     // set up canvas
     public Canvas() {
 	this.buttons = new Queue<Button>();
 	this.shapes = new Queue<Shape>();
-	this.constraints = new Queue<Constraint>();
+
+	this.sl = new Queue<SameLengthConstraint>();
+	this.para = new Queue<ParallelLineConstraint>();
+	this.perp = new Queue<PerpendicularLineConstraint>();
+
+	this.parallel_lines = new TreeMap<Line, TreeSet<Line>>();
+	this.perpendicular_lines = new TreeMap<Line, TreeSet<Line>>();
 
 	StdDraw.setCanvasSize(1200, 600);
 	StdDraw.setXscale(0.0, 2.0);
@@ -33,9 +52,54 @@ public class Canvas {
 	this.shapes.enqueue(s);
     }
 
-    // add a constraint
-    public void addConstraint(Constraint c) {
-	this.constraints.enqueue(c);
+    // add a constraint -- overloaded methods
+    public void addConstraint(SameLengthConstraint c) {this.sl.enqueue(c);}
+    public void addConstraint(SamePointConstraint c) {this.sp.enqueue(c);}
+    public void addConstraint(ParallelLineConstraint c) {
+	this.para.enqueue(c);
+	
+	// extract two lines
+	Line l1 = c.operand();
+	Line l2 = c.target();
+
+	// update parallel line graph
+	if (this.parallel_lines.containsKey(l1))
+	    this.parallel_lines.get(l1).add(l2);
+	else {
+	    TreeSet<Line> set = new TreeSet<Line>();
+	    set.add(l2);
+	    this.parallel_lines.put(l1, set);
+	}
+	if (this.parallel_lines.containsKey(l2))
+	    this.parallel_lines.get(l2).add(l1);
+	else {
+	    TreeSet<Line> set = new TreeSet<Line>();
+	    set.add(l1);
+	    this.parallel_lines.put(l2, set);
+	}
+    }
+    public void addConstraint(PerpendicularLineConstraint c) {
+	this.perp.enqueue(c);
+
+	// extract two lines
+	Line l1 = c.operand();
+	Line l2 = c.target();
+
+	// update perpendicular line graph
+	if (this.perpendicular_lines.containsKey(l1))
+	    this.perpendicular_lines.get(l1).add(l2);
+	else {
+	    TreeSet<Line> set = new TreeSet<Line>();
+	    set.add(l2);
+	    this.perpendicular_lines.put(l1, set);
+	}
+	if (this.perpendicular_lines.containsKey(l2))
+	    this.perpendicular_lines.get(l2).add(l1);
+	else {
+	    TreeSet<Line> set = new TreeSet<Line>();
+	    set.add(l1);
+	    this.perpendicular_lines.put(l2, set);
+	}
     }
 
     // add a button
@@ -110,10 +174,40 @@ public class Canvas {
 	    s.setPoint(operand, target);
     }
 
-    // optimize geometry
-    public void optimizeGeometry() {
-	for (Constraint c : this.constraints)
+    // optimize geometry -- simple version, no error checking or 
+    // operation reordering
+    public void optimizeGeometrySimple() {
+	for (SamePointConstraint c : this.sp)
 	    c.execute();
+	for (SameLengthConstraint c : this.sl)
+	    c.execute();
+	for (ParallelLineConstraint c : this.para)
+	    c.execute();
+	for (PerpendicularLineConstraint c : this.perp)
+	    c.execute();
+    }
+
+    // optimize geometry -- full version
+    public void optimizeGeometry() {
+	if (!this.isSatisfiable()) {
+	    System.out.println("ERROR: Constraints not satisfiable.");
+	    System.exit(1);
+	}
+    }
+
+    // check if all constraints are simultaneously satisfiable
+    private boolean isSatisfiable() {
+	
+	// search through all perpendicular line constraints
+	for (PerpendicularLineConstraint perp_line : this.perp) {
+
+	    // search through the graph of parallel line constraints
+	    // starting from these two lines and see if there is a path from one
+	    // to the other
+
+
+	}
+	return true;
     }
 
     // draw current state

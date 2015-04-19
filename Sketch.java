@@ -183,8 +183,8 @@ public class Sketch {
 	second_click.highlight();
 	canvas.show();
 	
-	ParallelLineConstraint para = new
-	    ParallelLineConstraint((Line) first_click, (Line) second_click);
+	ParallelLineConstraint para = 
+	    new ParallelLineConstraint((Line) first_click, (Line) second_click);
 	canvas.addConstraint(para);
 
 	first_click.unhighlight();
@@ -208,8 +208,8 @@ public class Sketch {
 	first_click.highlight();
 	canvas.show();
 	
-	PerpendicularLineConstraint perp = new
-	    PerpendicularLineConstraint((Line) first_click, (Line) second_click);
+	PerpendicularLineConstraint perp =
+	    new PerpendicularLineConstraint((Line) first_click, (Line) second_click);
 	canvas.addConstraint(perp);
 
 	first_click.unhighlight();
@@ -233,8 +233,8 @@ public class Sketch {
 	second_click.highlight();
 	canvas.show();
 	
-	SameLengthConstraint sl = new
-	    SameLengthConstraint((Line) first_click, (Line) second_click);
+	SameLengthConstraint sl = 
+	    new SameLengthConstraint((Line) first_click, (Line) second_click);
 	canvas.addConstraint(sl);
 
 	first_click.unhighlight();

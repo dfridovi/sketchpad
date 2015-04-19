@@ -23,4 +23,8 @@ public class PerpendicularLineConstraint implements Constraint {
     public void execute() {
 	this.operand.makePerpendicularTo(this.target);
     }
+
+    // return operand, target
+    public Line operand() {return this.operand;} 
+    public Line target() {return this.target;} 
 }

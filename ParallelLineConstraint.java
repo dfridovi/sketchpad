@@ -10,8 +10,8 @@
 
 public class ParallelLineConstraint implements Constraint {
     
-    private Line operand;
-    private Line target;
+    public Line operand;
+    public Line target;
 
     // initialize operand and target
     public ParallelLineConstraint(Line operand, Line target) {
@@ -23,4 +23,8 @@ public class ParallelLineConstraint implements Constraint {
     public void execute() {
 	this.operand.makeParallelTo(this.target);
     }
+
+    // return operand, target
+    public Line operand() {return this.operand;} 
+    public Line target() {return this.target;} 
 }

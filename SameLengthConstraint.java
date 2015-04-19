@@ -23,4 +23,8 @@ public class SameLengthConstraint implements Constraint {
     public void execute() {
 	this.operand.makeSameLengthAs(this.target);
     }
+
+    // return operand, target
+    public Line operand() {return this.operand;} 
+    public Line target() {return this.target;} 
 }
