@@ -64,6 +64,13 @@ public class Line implements Shape, Comparable<Line> {
 	return 1;
     }
 
+    // check if this is the same as another line
+    public boolean equals(Line other) {
+    	if (this.p.equals(other.p) && this.q.equals(other.q)) return true;
+    	if (this.q.equals(other.p) && this.p.equals(other.q)) return true;
+	return false;
+    }
+
     // duplicate this line
     public Line duplicate() {
 	return new Line(this.p.duplicate(), this.q.duplicate());

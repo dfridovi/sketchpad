@@ -32,6 +32,7 @@ public class Canvas {
 	this.buttons = new Queue<Button>();
 	this.shapes = new Queue<Shape>();
 
+	this.sp = new Queue<SamePointConstraint>();
 	this.sl = new Queue<SameLengthConstraint>();
 	this.para = new Queue<ParallelLineConstraint>();
 	this.perp = new Queue<PerpendicularLineConstraint>();
@@ -56,6 +57,14 @@ public class Canvas {
     public void addConstraint(SameLengthConstraint c) {this.sl.enqueue(c);}
     public void addConstraint(SamePointConstraint c) {this.sp.enqueue(c);}
     public void addConstraint(ParallelLineConstraint c) {
+	
+	// test if satisfiable
+	if (!this.isSatisfiable(c)) {;
+	    System.out.println("ERROR: Constraints not satisfiable.");
+	    return;
+	}
+
+	// add to queue
 	this.para.enqueue(c);
 	
 	// extract two lines
@@ -79,6 +88,14 @@ public class Canvas {
 	}
     }
     public void addConstraint(PerpendicularLineConstraint c) {
+
+	// test if satisfiable
+	if (!this.isSatisfiable(c)) {
+	    System.out.println("ERROR: Constraints not satisfiable.");
+	    return;
+	}
+
+	// add to queue
 	this.perp.enqueue(c);
 
 	// extract two lines
@@ -189,25 +206,119 @@ public class Canvas {
 
     // optimize geometry -- full version
     public void optimizeGeometry() {
-	if (!this.isSatisfiable()) {
-	    System.out.println("ERROR: Constraints not satisfiable.");
-	    System.exit(1);
-	}
+	optimizeGeometrySimple();
     }
 
     // check if all constraints are simultaneously satisfiable
-    private boolean isSatisfiable() {
+    private boolean isSatisfiable(ParallelLineConstraint c) {
 	
-	// search through all perpendicular line constraints
-	for (PerpendicularLineConstraint perp_line : this.perp) {
+	// extract two lines
+	Line l1 = c.operand();
+	Line l2 = c.target();
 
-	    // search through the graph of parallel line constraints
-	    // starting from these two lines and see if there is a path from one
-	    // to the other
+	// return true if perpendicular graph doesn't contain either line
+	if (!this.perpendicular_lines.containsKey(l1) ||
+	    !this.perpendicular_lines.containsKey(l2))
+	    return true;
 
+	// assume satisfiable up to this point
+	// ensure that there are an even number of edges between l1 and l2
+	// on the perpendicular line graph
+	int perp_length = this.perpPathLength(l1, l2, 0, new TreeSet<Line>());
+	if (perp_length < 0) return true;
+	if (perp_length % 2 == 1)
+	    return false;
 
-	}
 	return true;
+    }
+
+    // check if all constraints are simultaneously satisfiable
+    private boolean isSatisfiable(PerpendicularLineConstraint c) {
+	
+	// extract two lines
+	Line l1 = c.operand();
+	Line l2 = c.target();
+
+	// return true if both graphs don't contain either line
+	if ((!this.perpendicular_lines.containsKey(l1) ||
+	     !this.perpendicular_lines.containsKey(l2)) &&
+	    (!this.parallel_lines.containsKey(l1) ||
+	     !this.parallel_lines.containsKey(l2)))
+	    return true;
+
+	// if either line is missing from only parallel graph, then check
+	// just perpendicular graph
+	if (!this.parallel_lines.containsKey(l1) ||
+	    !this.parallel_lines.containsKey(l2)) {
+	    int perp_length = this.perpPathLength(l1, l2, 0, new TreeSet<Line>());
+	    if (perp_length % 2 == 1) return true;
+	    return false;
+	}
+
+	// if either line is missing from only perpendicular graph, then check
+	// just parallel graph
+	if (!this.perpendicular_lines.containsKey(l1) ||
+	    !this.perpendicular_lines.containsKey(l2)) {
+	    int para_length = this.paraPathLength(l1, l2, 0, new TreeSet<Line>());
+	    if (para_length < 0) return true;
+	    return false;
+	}
+	    
+	// else, got to check both graphs
+	// assume satisfiable up to this point
+	// ensure that there are an odd number of edges between l1 and l2
+	// on the perpendicular line graph, and that there is no path between
+	// the two lines on the parallel line graph
+	int perp_length = this.perpPathLength(l1, l2, 0, new TreeSet<Line>());
+	int para_length = this.paraPathLength(l1, l2, 0, new TreeSet<Line>());
+	
+	if (perp_length < 0 && para_length < 0) return true;
+	if (para_length >= 0) return false;
+	if (perp_length % 2 == 1) return true;
+
+	return false;
+    }
+
+    // helper method: depth first search to get path length to line 
+    // in perpendicular line graph
+    private int perpPathLength(Line start, Line goal, 
+			       int len, TreeSet<Line> marked) {
+
+	// base case
+	if (start.equals(goal)) return len;
+
+	// mark this line
+	marked.add(start);
+
+  	// recursive step for all non-marked lines
+	for (Line l : this.perpendicular_lines.get(start)) {
+	    if (!marked.contains(l))
+		return perpPathLength(l, goal, ++len, marked);
+	}
+
+	// if gets here, then there is no connection
+	return -1;
+    }
+
+    // helper method: depth first search to get path length to line 
+    // in parallel line graph
+    private int paraPathLength(Line start, Line goal, 
+			       int len, TreeSet<Line> marked) {
+
+	// base case
+	if (start.equals(goal)) return len;
+
+	// mark this line
+	marked.add(start);
+
+	// recursive step for all non-marked lines
+	for (Line l : this.parallel_lines.get(start)) {
+	    if (!marked.contains(l))
+		return paraPathLength(l, goal, ++len, marked);
+	}
+
+	// if gets here, then there is no connection
+	return -1;
     }
 
     // draw current state
