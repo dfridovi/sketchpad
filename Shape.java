@@ -14,6 +14,7 @@ public interface Shape {
     Queue<Point> getPoints();
     void setPoint(Point operand, Point target);
     double distTo(double x, double y);
+    double moveGradient(Queue<Constraint> constraints, double speed);
     void draw();
     void highlight();
     void unhighlight();

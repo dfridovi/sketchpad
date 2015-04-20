@@ -19,6 +19,12 @@ public class SameLengthConstraint implements Constraint {
 	this.target = target;
     }
 
+    // return squared error 
+    public double squaredError() {
+	return ((this.operand.length() - this.target.length()) *
+		(this.operand.length() - this.target.length()));
+    }
+
     // execute this constraint by changing only the operand
     public void execute() {
 	this.operand.makeSameLengthAs(this.target);

@@ -19,6 +19,12 @@ public class ParallelLineConstraint implements Constraint {
 	this.target = target;
     }
 
+    // return squared error 
+    public double squaredError() {
+	return ((this.operand.slope() - this.target.slope()) *
+		(this.operand.slope() - this.target.slope()));
+    }
+
     // execute this constraint by changing only the operand
     public void execute() {
 	this.operand.makeParallelTo(this.target);

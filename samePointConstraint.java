@@ -20,6 +20,12 @@ public class SamePointConstraint implements Constraint {
 	this.canvas = canvas;
     }
 
+    // return squared error (this one should never be called)
+    public double squaredError() {
+	return (this.operand.distTo(this.target) *
+		this.operand.distTo(this.target));
+    }
+
     // search through every shape on the canvas and replace instances
     // of the operand point with references to the target point
     public void execute() {

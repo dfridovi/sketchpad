@@ -19,6 +19,16 @@ public class Line implements Shape, Comparable<Line> {
 	this.highlight = false;
     }
 
+    // return line length
+    public double length() {return this.p.distTo(this.q);}
+
+    // return slope
+    public double slope() {return this.p.slopeTo(this.q);}
+
+    // return deltaX and deltaY
+    public double deltaX() {return this.p.deltaX(this.q);}
+    public double deltaY() {return this.p.deltaY(this.q);}
+
     // make parallel to another line, while maintaining constant length
     // and keeping the point p fixed
     public void makeParallelTo(Line that) {

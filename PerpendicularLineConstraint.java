@@ -19,6 +19,21 @@ public class PerpendicularLineConstraint implements Constraint {
 	this.target = target;
     }
 
+    // return squared error 
+    public double squaredError() {
+	double dx_operand = this.operand.deltaX();
+	double dy_operand = this.operand.deltaY();
+	double dx_target = this.target.deltaX();
+	double dy_target = this.target.deltaY();
+	
+	double normed_inner_product = 
+	    ((dx_operand * dx_target + dy_operand * dy_target) /
+	     (this.operand.length() * this.operand.length *
+	      this.target.length() * this.target.length));
+
+	return normed_inner_product * normed_inner_product;
+    }
+
     // execute this constraint by changing only the operand
     public void execute() {
 	this.operand.makePerpendicularTo(this.target);
