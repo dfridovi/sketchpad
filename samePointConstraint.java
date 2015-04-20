@@ -26,22 +26,6 @@ public class SamePointConstraint implements Constraint {
 		this.operand.distTo(this.target));
     }
 
-    // return squared error
-    public double squaredError(Shape a, Shape b) {
-
-	// check type
-	if (!a.getType().equals(Point.class) ||
-	    !a.getType().equals(Point.class)) {
-	    System.out.println("Wrong Shape. Need a Point.");
-	    return Double.POSITIVE_INFINITY;
-	}
-	a = (Point) a;
-	b = (Point) b;
-
-	// calculate error
-	return (a.distTo(b) * a.distTo(b));
-    }
-
     // search through every shape on the canvas and replace instances
     // of the operand point with references to the target point
     public void execute() {

@@ -10,7 +10,6 @@ public interface Constraint {
     // required methods
     void execute();
     double squaredError();
-    double squaredError(Shape a, Shape b);
     Shape operand();
     Shape target();
 }

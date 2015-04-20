@@ -6,7 +6,9 @@
  * may later be imposed which forces it to change position.)
  ****************************************************************************/
 
-public class Line implements Shape, Comparable<Line> {
+import java.util.TreeSet;
+
+public class Line implements Shape {
     
     private Point p;
     private Point q;
@@ -28,6 +30,15 @@ public class Line implements Shape, Comparable<Line> {
     // return deltaX and deltaY
     public double deltaX() {return this.p.deltaX(this.q);}
     public double deltaY() {return this.p.deltaY(this.q);}
+
+    // calculate the gradient according to a set of constraints, 
+    // and move in that direction at some speed -- returns final error
+    public double moveGradient(TreeSet<Constraint> constraints, double speed) {
+	
+	// just call moveGradient on p, q and return final result
+	this.p.moveGradient(constraints, speed);
+	return this.q.moveGradient(constraints, speed);
+    }
 
     // make parallel to another line, while maintaining constant length
     // and keeping the point p fixed
@@ -63,14 +74,19 @@ public class Line implements Shape, Comparable<Line> {
     }
 
     // comparable interface
-    public int compareTo(Line other) {
+    public int compareTo(Shape s) {
 	
+	// Lines are bigger than Points but smaller than Composites
+	if (s.getClass().equals(Point.class)) return 1;
+	if (s.getClass().equals(Composite.class)) return -1;
+	Line l = (Line) s;
+
 	// order by magnitude (arbitrary)
 	double this_len = this.p.distTo(this.q);
-	double other_len = other.p.distTo(other.q);
+	double l_len = l.p.distTo(l.q);
 
-	if (this_len < other_len) return -1;
-	if (this_len == other_len) return 0;
+	if (this_len < l_len) return -1;
+	if (this_len == l_len) return 0;
 	return 1;
     }
 

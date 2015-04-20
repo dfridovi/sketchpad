@@ -6,15 +6,18 @@
  * (points, lines, and composites).
  ************************************************************************/
 
-public interface Shape {
+import java.util.TreeSet;
+
+public interface Shape extends Comparable<Shape> {
     
     // must be able to implement these functions
     void translate(double deltaX, double deltaY);
     Shape duplicate();
     Queue<Point> getPoints();
     void setPoint(Point operand, Point target);
+    int compareTo(Shape s);
     double distTo(double x, double y);
-    double moveGradient(Queue<Constraint> constraints, double speed);
+    double moveGradient(TreeSet<Constraint> constraints, double speed);
     void draw();
     void highlight();
     void unhighlight();

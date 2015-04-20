@@ -6,6 +6,8 @@
  * different primitives.
  ****************************************************************************/
 
+import java.util.TreeSet;
+
 public class Composite implements Shape {
 
     // make a queue for each supported type
@@ -14,6 +16,31 @@ public class Composite implements Shape {
     // initialize instance variables
     public Composite(Queue<Shape> shapes) {
 	this.shapes = shapes;
+    }
+
+    // calculate the gradient according to a set of constraints, 
+    // and move in that direction at some speed -- returns final error
+    public double moveGradient(TreeSet<Constraint> constraints, double speed) {
+	
+	// just call moveGradient on each sub-shape and return final result
+	double final_error = 0.0;
+	for (Shape s : this.shapes)
+	    final_error = s.moveGradient(constraints, speed);
+
+	return final_error;
+    }
+
+    // comparable interface
+    public int compareTo(Shape s) {
+	
+	// Composites are bigger than other shapes
+	if (!s.getClass().equals(Composite.class)) return 1;
+	Composite c = (Composite) s;
+
+	// order by number of shapes
+	if (this.shapes.size() < c.shapes.size()) return -1;
+	if (this.shapes.size() == c.shapes.size()) return 0;
+	return 1;
     }
 
     // translate all objects in this composite by a fixed delta

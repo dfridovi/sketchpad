@@ -6,6 +6,8 @@
  * may later be imposed which forces it to change position.)
  ****************************************************************************/
 
+import java.util.TreeSet;
+
 public class Point implements Shape {
     
     private double x;
@@ -29,17 +31,51 @@ public class Point implements Shape {
 
     // calculate the gradient according to a set of constraints, 
     // and move in that direction at some speed -- returns final error
-    // this really shouldn't be called, but we provide a method anyway
-    public double moveGradient(Queue<Constraint> constraints, double speed) {
+    public double moveGradient(TreeSet<Constraint> constraints, double speed) {
 	
 	// get initial error
 	double initial_error = 0.0;
 	for (Constraint c : constraints)
 	    initial_error += c.squaredError();
 
-	// calculate error as though 
+	// jitter in +x direction, and calculate error
+	this.translate(0.001, 0);
+	double x_error = 0.0;
+	for (Constraint c : constraints)
+	    x_error += c.squaredError();
+	this.translate(-0.001, 0);
+
+	// jitter in +y direction, and calculate error
+	this.translate(0, 0.001);
+	double y_error = 0.0;
+	for (Constraint c : constraints)
+	    y_error += c.squaredError();
+	this.translate(0, -0.001);
+
+	// move one step in the direction of the negative gradient (descent)
+	double grad_x = x_error - initial_error;
+	double grad_y = y_error - initial_error;
+
+	this.translate(speed * -grad_x, speed * -grad_y);
+
+	// compute final error
+	double final_error = 0.0;
+	for (Constraint c : constraints)
+	    final_error += c.squaredError();
+	return final_error;
+    }
+
+    // comparable interface
+    public int compareTo(Shape s) {
 	
-	
+	// Points are less than Lines and Composites
+	if (!s.getClass().equals(Point.class)) return -1;
+	s = (Point) s;
+
+	// order based on distance from the origin (arbitrary)
+	if (this.distTo(0, 0) < s.distTo(0, 0)) return -1;
+	if (this.distTo(0, 0) > s.distTo(0, 0)) return 1;
+	return 0;
     }
 
     // get Euclidean distance to another point

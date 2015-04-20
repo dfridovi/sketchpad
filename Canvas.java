@@ -18,24 +18,26 @@ public class Canvas {
     private Queue<Shape> shapes; 
 
     // store constraints
-    private Queue<SameLengthConstraint> sl;
     private Queue<SamePointConstraint> sp;
-    private Queue<ParallelLineConstraint> para;
-    private Queue<PerpendicularLineConstraint> perp;
+    private Queue<Constraint> line_constraints;
+    private TreeMap<Shape, TreeSet<Constraint>> constraint_map;
 
     // keep a graph for parallel and perpendicular constraints
     private TreeMap<Line, TreeSet<Line>> parallel_lines;
     private TreeMap<Line, TreeSet<Line>> perpendicular_lines;
-    
+
+    // constants for gradient descent optimization
+    private final double tolerance = 0.0001;
+    private final double speed = 1.0;
+
     // set up canvas
     public Canvas() {
 	this.buttons = new Queue<Button>();
 	this.shapes = new Queue<Shape>();
 
 	this.sp = new Queue<SamePointConstraint>();
-	this.sl = new Queue<SameLengthConstraint>();
-	this.para = new Queue<ParallelLineConstraint>();
-	this.perp = new Queue<PerpendicularLineConstraint>();
+	this.line_constraints = new Queue<Constraint>();
+	this.constraint_map = new TreeMap<Shape, TreeSet<Constraint>>();
 
 	this.parallel_lines = new TreeMap<Line, TreeSet<Line>>();
 	this.perpendicular_lines = new TreeMap<Line, TreeSet<Line>>();
@@ -54,8 +56,30 @@ public class Canvas {
     }
 
     // add a constraint -- overloaded methods
-    public void addConstraint(SameLengthConstraint c) {this.sl.enqueue(c);}
     public void addConstraint(SamePointConstraint c) {this.sp.enqueue(c);}
+    public void addConstraint(SameLengthConstraint c) {
+	this.line_constraints.enqueue(c);
+
+	// extract two lines
+	Line l1 = c.operand();
+	Line l2 = c.target();
+
+	// add to constraint map
+	if (this.constraint_map.containsKey(l1))
+	    this.constraint_map.get(l1).add(c);
+	else {
+	    TreeSet<Constraint> set = new TreeSet<Constraint>();
+	    set.add(c);
+	    this.constraint_map.put(l1, set);
+	}
+	if (this.constraint_map.containsKey(l2))
+	    this.constraint_map.get(l2).add(c);
+	else {
+	    TreeSet<Constraint> set = new TreeSet<Constraint>();
+	    set.add(c);
+	    this.constraint_map.put(l2, set);
+	}
+    }
     public void addConstraint(ParallelLineConstraint c) {
 	
 	// test if satisfiable
@@ -65,11 +89,27 @@ public class Canvas {
 	}
 
 	// add to queue
-	this.para.enqueue(c);
+	this.line_constraints.enqueue(c);
 	
 	// extract two lines
 	Line l1 = c.operand();
 	Line l2 = c.target();
+
+	// add to constraint map
+	if (this.constraint_map.containsKey(l1))
+	    this.constraint_map.get(l1).add(c);
+	else {
+	    TreeSet<Constraint> set = new TreeSet<Constraint>();
+	    set.add(c);
+	    this.constraint_map.put(l1, set);
+	}
+	if (this.constraint_map.containsKey(l2))
+	    this.constraint_map.get(l2).add(c);
+	else {
+	    TreeSet<Constraint> set = new TreeSet<Constraint>();
+	    set.add(c);
+	    this.constraint_map.put(l2, set);
+	}
 
 	// update parallel line graph
 	if (this.parallel_lines.containsKey(l1))
@@ -87,6 +127,7 @@ public class Canvas {
 	    this.parallel_lines.put(l2, set);
 	}
     }
+
     public void addConstraint(PerpendicularLineConstraint c) {
 
 	// test if satisfiable
@@ -96,11 +137,27 @@ public class Canvas {
 	}
 
 	// add to queue
-	this.perp.enqueue(c);
+	this.line_constraints.enqueue(c);
 
 	// extract two lines
 	Line l1 = c.operand();
 	Line l2 = c.target();
+
+	// add to constraint map
+	if (this.constraint_map.containsKey(l1))
+	    this.constraint_map.get(l1).add(c);
+	else {
+	    TreeSet<Constraint> set = new TreeSet<Constraint>();
+	    set.add(c);
+	    this.constraint_map.put(l1, set);
+	}
+	if (this.constraint_map.containsKey(l2))
+	    this.constraint_map.get(l2).add(c);
+	else {
+	    TreeSet<Constraint> set = new TreeSet<Constraint>();
+	    set.add(c);
+	    this.constraint_map.put(l2, set);
+	}
 
 	// update perpendicular line graph
 	if (this.perpendicular_lines.containsKey(l1))
@@ -196,17 +253,40 @@ public class Canvas {
     public void optimizeGeometrySimple() {
 	for (SamePointConstraint c : this.sp)
 	    c.execute();
-	for (SameLengthConstraint c : this.sl)
+	for (Constraint c : this.line_constraints)
 	    c.execute();
-	for (ParallelLineConstraint c : this.para)
-	    c.execute();
-	for (PerpendicularLineConstraint c : this.perp)
-	    c.execute();
+    }
+
+    // get error in line constraints
+    private double getLineError() {
+	double error = 0.0;
+	for (Constraint c : this.line_constraints)
+	    error += c.squaredError();
+	
+	return error;
     }
 
     // optimize geometry -- full version
     public void optimizeGeometry() {
-	optimizeGeometrySimple();
+
+	// execute SamePointConstraints
+	for (SamePointConstraint c : this.sp)
+	    c.execute();
+	
+	// loop until error is below threshold
+	int iter = 0;
+	double error = getLineError();
+	while (error > this.tolerance) {
+	    System.out.printf("Iteration %3d: %8.6f\n", iter, error);
+
+	    for (Shape s : this.shapes) {
+		if (this.constraint_map.containsKey(s))
+		    s.moveGradient(this.constraint_map.get(s), this.speed);
+	    }
+
+	    error = getLineError();
+	    iter++;
+	}
     }
 
     // check if all constraints are simultaneously satisfiable

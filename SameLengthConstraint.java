@@ -25,23 +25,6 @@ public class SameLengthConstraint implements Constraint {
 		(this.operand.length() - this.target.length()));
     }
 
-    // return squared error
-    public double squaredError(Shape a, Shape b) {
-
-	// check type
-	if (!a.getType().equals(Line.class) ||
-	    !a.getType().equals(Line.class)) {
-	    System.out.println("Wrong Shape. Need a Line.");
-	    return Double.POSITIVE_INFINITY;
-	}
-	a = (Line) a;
-	b = (Line) b;
-
-	// calculate error
-	return ((a.length() - b.length()) *
-		(a.length() - b.length()));
-    }
-
     // execute this constraint by changing only the operand
     public void execute() {
 	this.operand.makeSameLengthAs(this.target);
