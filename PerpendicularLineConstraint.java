@@ -34,6 +34,33 @@ public class PerpendicularLineConstraint implements Constraint {
 	return normed_inner_product * normed_inner_product;
     }
 
+    // return squared error
+    public double squaredError(Shape a, Shape b) {
+
+	// check type
+	if (!a.getType().equals(Line.class) ||
+	    !b.getType().equals(Line.class)) {
+	    System.out.println("Wrong Shape. Need a Line.");
+	    return Double.POSITIVE_INFINITY;
+	}
+	a = (Line) a;
+	b = (Line) b;
+
+	// determine which line a corresponds to
+
+	// calculate error
+	double dx_a = a.deltaX();
+	double dy_a = a.deltaY();
+	double dx_b = b.deltaX();
+	double dy_b = b.deltaY();
+	
+	double normed_inner_product = 
+	    ((dx_a * dx_b + dy_a * dy_b) /
+	     (a.length() * a.length * b.length() * b.length));
+
+	return normed_inner_product * normed_inner_product;
+    }
+
     // execute this constraint by changing only the operand
     public void execute() {
 	this.operand.makePerpendicularTo(this.target);

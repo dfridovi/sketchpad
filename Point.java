@@ -27,6 +27,21 @@ public class Point implements Shape {
 	    return false;		
     }
 
+    // calculate the gradient according to a set of constraints, 
+    // and move in that direction at some speed -- returns final error
+    // this really shouldn't be called, but we provide a method anyway
+    public double moveGradient(Queue<Constraint> constraints, double speed) {
+	
+	// get initial error
+	double initial_error = 0.0;
+	for (Constraint c : constraints)
+	    initial_error += c.squaredError();
+
+	// calculate error as though 
+	
+	
+    }
+
     // get Euclidean distance to another point
     public double distTo(Point p) {
 	double deltaX = p.x - this.x;
