@@ -19,6 +19,27 @@ public class ParallelLineConstraint implements Constraint {
 	this.target = target;
     }
 
+    // comparable interface
+    public int compareTo(Constraint c) {
+	
+	// This constraint is greater than Point constraints and SameLength but 
+	// less than Perpendicular constraints
+	if (c.getClass().equals(SamePointConstraint.class)) return 1;
+	if (c.getClass().equals(SameLengthConstraint.class)) return 1;
+	if (c.getClass().equals(PerpendicularLineConstraint.class)) return -1;
+	ParallelLineConstraint s = (ParallelLineConstraint) c;
+
+	// order based on total magnitude (arbitrary)
+	if (this.operand.length() + this.target.length() 
+	    < s.operand.length() + s.target.length()) 
+	    return -1;
+	if (this.operand.length() + this.target.length() 
+	    > s.operand.length() + s.target.length()) 
+	    return -1;
+
+	return 0;
+    }
+
     // return squared error 
     public double squaredError() {
 	return ((this.operand.slope() - this.target.slope()) *

@@ -19,6 +19,24 @@ public class PerpendicularLineConstraint implements Constraint {
 	this.target = target;
     }
 
+    // comparable interface
+    public int compareTo(Constraint c) {
+	
+	// This constraint is greater than all other constraint types
+	if (!c.getClass().equals(PerpendicularLineConstraint.class)) return 1;
+	PerpendicularLineConstraint s = (PerpendicularLineConstraint) c;
+
+	// order based on total magnitude (arbitrary)
+	if (this.operand.length() + this.target.length() 
+	    < s.operand.length() + s.target.length()) 
+	    return -1;
+	if (this.operand.length() + this.target.length() 
+	    > s.operand.length() + s.target.length()) 
+	    return -1;
+
+	return 0;
+    }
+
     // return squared error 
     public double squaredError() {
 	double dx_operand = this.operand.deltaX();
