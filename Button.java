@@ -50,6 +50,7 @@ public class Button {
 	    b.draw();
 	    b = b.child;
 	}
+	StdDraw.show();
     }
 
     // return which child is clicked

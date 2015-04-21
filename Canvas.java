@@ -27,8 +27,8 @@ public class Canvas {
     private TreeMap<Line, TreeSet<Line>> perpendicular_lines;
 
     // constants for gradient descent optimization
-    private final double tolerance = 0.0001;
-    private final double speed = 1.0;
+    private final double tolerance = 0.005;
+    private final double speed = 2.0;
 
     // set up canvas
     public Canvas() {
@@ -286,6 +286,7 @@ public class Canvas {
 
 	    error = getLineError();
 	    iter++;
+	    this.show();
 	}
     }
 
@@ -408,6 +409,6 @@ public class Canvas {
 	    b.draw();
 	for (Shape s : this.shapes)
 	    s.draw();
-	StdDraw.show();
+	StdDraw.show(5);
     }
 }
