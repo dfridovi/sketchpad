@@ -20,7 +20,7 @@ public class Canvas {
     // store constraints
     private Queue<SamePointConstraint> sp;
     private Queue<Constraint> line_constraints;
-    private TreeMap<Shape, TreeSet<Constraint>> constraint_map;
+    public TreeMap<Shape, TreeSet<Constraint>> constraint_map;
 
     // keep a graph for parallel and perpendicular constraints
     private TreeMap<Line, TreeSet<Line>> parallel_lines;
@@ -28,6 +28,7 @@ public class Canvas {
 
     // constants for gradient descent optimization
     private final double tolerance = 0.005;
+    private final double delta_tolerance = 0.00005;
     private final double speed = 1.0;
 
     // set up canvas
@@ -282,7 +283,9 @@ public class Canvas {
 	// loop until error is below threshold
 	int iter = 0;
 	double error = getLineError();
-	while (error > this.tolerance) {
+	double delta_error = error;
+	while (error > this.tolerance && 
+	       delta_error > this.delta_tolerance) {
 	    System.out.printf("Iteration %3d: %8.6f\n", iter, error);
 
 	    for (Shape s : this.shapes) {
@@ -290,7 +293,9 @@ public class Canvas {
 		    s.moveGradient(this.constraint_map.get(s), this.speed);
 	    }
 
-	    error = getLineError();
+	    double new_error = getLineError();
+	    delta_error = Math.abs(new_error - error);
+	    error = new_error;
 	    iter++;
 	    this.show();
 	}

@@ -7,15 +7,58 @@
  ****************************************************************************/
 
 import java.util.TreeSet;
+import java.util.TreeMap;
 
 public class Composite implements Shape {
 
     // make a queue for each supported type
     private final Queue<Shape> shapes;
+    private final Queue<Constraint> constraints;
+    private Canvas canvas;
     
     // initialize instance variables
-    public Composite(Queue<Shape> shapes) {
+    public Composite(Queue<Shape> shapes, Canvas canvas) {
 	this.shapes = shapes;
+	this.canvas = canvas;
+	this.constraints = new Queue<Constraint>();
+
+	// for each shape, check canvas for associated constraints
+	for (Shape s1 : this.shapes) {
+	    if (this.canvas.constraint_map.containsKey(s1)) {
+		for (Constraint c : this.canvas.constraint_map.get(s1)) {
+
+		    // only add to this.constraints if both 
+		    // target/operand in this.shapes
+		    for (Shape s2 : this.shapes) {
+			if (s2.compareTo(s1) == 0) continue;
+			if (c.operand().compareTo(s2) == 0)
+			    this.constraints.enqueue(c);
+			else if (c.target().compareTo(s2) == 0)
+			    this.constraints.enqueue(c);
+		    }
+		}
+	    }
+	}
+    }
+
+    // overloaded constructor -- called from this.duplicate()
+    public Composite(Queue<Shape> shapes, Queue<Constraint> constraints, 
+		     Canvas canvas) {
+	this.shapes = shapes;
+	this.canvas = canvas;
+	this.constraints = constraints;
+
+	// add constraints to canvas
+	for (Constraint c : this.constraints) {
+	    if (c.getClass().equals(SamePointConstraint.class))
+		this.canvas.addConstraint((SamePointConstraint) c);
+	    if (c.getClass().equals(SameLengthConstraint.class))
+		this.canvas.addConstraint((SameLengthConstraint) c);
+	    if (c.getClass().equals(ParallelLineConstraint.class))
+		this.canvas.addConstraint((ParallelLineConstraint) c);
+	    if (c.getClass().equals(PerpendicularLineConstraint.class))
+		this.canvas.addConstraint((PerpendicularLineConstraint) c);
+	}
     }
 
     // calculate the gradient according to a set of constraints, 
@@ -52,10 +95,40 @@ public class Composite implements Shape {
     // duplicate this composite
     public Composite duplicate() {
 	Queue<Shape> dup_shapes = new Queue<Shape>();
-	for (Shape s : this.shapes)
-	    dup_shapes.enqueue(s.duplicate());
+	Queue<Constraint> dup_constraints = new Queue<Constraint>();
+	TreeMap<Shape, Shape> shape_map = new TreeMap<Shape, Shape>();
 
-	Composite dup = new Composite(dup_shapes);
+	// duplicate all shapes and add to shape_map
+	for (Shape s : this.shapes) {
+	    Shape copy = s.duplicate();
+	    dup_shapes.enqueue(copy);
+	    shape_map.put(s, copy);
+	}
+
+	// look through all constraints and duplicate with copied shapes
+	for (Constraint c : this.constraints) {
+	    Shape s1 = c.operand();
+	    Shape s2 = c.target();
+	    Constraint copy = null;
+
+	    if (c.getClass().equals(SamePointConstraint.class))
+		copy = new SamePointConstraint((Point) shape_map.get(s1), 
+					       (Point) shape_map.get(s2),
+					       this.canvas);
+	    if (c.getClass().equals(SameLengthConstraint.class))
+		copy = new SameLengthConstraint((Line) shape_map.get(s1), 
+						(Line) shape_map.get(s2));
+	    if (c.getClass().equals(ParallelLineConstraint.class))
+		copy = new ParallelLineConstraint((Line) shape_map.get(s1), 
+					       (Line) shape_map.get(s2));
+	    if (c.getClass().equals(PerpendicularLineConstraint.class))
+		copy = new ParallelLineConstraint((Line) shape_map.get(s1), 
+					       (Line) shape_map.get(s2));
+
+	    dup_constraints.enqueue(copy);
+	}
+
+	Composite dup = new Composite(dup_shapes, dup_constraints, this.canvas);
 	return dup;
     }
 

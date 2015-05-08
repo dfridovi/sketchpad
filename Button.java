@@ -38,9 +38,9 @@ public class Button {
 	Button b = this;
 	while (b.child != null)
 	    b = b.child;
-	b.child = new Button(this.center_x, 
-			     this.center_y - 2 * this.half_height - margin, 
-			     this.half_width, this.half_height, name);
+	b.child = new Button(b.center_x, 
+			     b.center_y - 2 * b.half_height - margin, 
+			     b.half_width, b.half_height, name);
     }
 
     // draw family tree to StdDraw

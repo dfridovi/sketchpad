@@ -105,6 +105,7 @@ public class Sketch {
     }
 
     // allow user to select a group of primitives and bundle into a composite
+    // check canvas and copy over any constraints as well
     private static void handleGroup(Canvas canvas, Button b) {
 	Queue<Shape> group = new Queue<Shape>();
 
@@ -125,9 +126,9 @@ public class Sketch {
 		    }
 		}
 	    }
-	
+	    
 	    // create new composite, add to map, and make new button
-	    Composite c = new Composite(group);
+	    Composite c = new Composite(group, canvas);
 	    String name = "Composite #" + Integer.toString(compositeID++);
 	    canvas.addShape(c);
 	    compositeMap.put(name, c);
