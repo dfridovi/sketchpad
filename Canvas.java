@@ -28,7 +28,7 @@ public class Canvas {
 
     // constants for gradient descent optimization
     private final double tolerance = 0.005;
-    private final double speed = 2.0;
+    private final double speed = 1.0;
 
     // set up canvas
     public Canvas() {
@@ -56,9 +56,13 @@ public class Canvas {
     }
 
     // add a constraint -- overloaded methods
-    public void addConstraint(SamePointConstraint c) {this.sp.enqueue(c);}
+    public void addConstraint(SamePointConstraint c) {
+	this.sp.enqueue(c);
+	System.out.println("Entered valid SamePointConstraint.");
+    }
     public void addConstraint(SameLengthConstraint c) {
 	this.line_constraints.enqueue(c);
+	System.out.println("Entered valid SameLengthConstraint.");
 
 	// extract two lines
 	Line l1 = c.operand();
@@ -90,7 +94,8 @@ public class Canvas {
 
 	// add to queue
 	this.line_constraints.enqueue(c);
-	
+	System.out.println("Entered valid ParallelLineConstraint.");	
+
 	// extract two lines
 	Line l1 = c.operand();
 	Line l2 = c.target();
@@ -138,6 +143,7 @@ public class Canvas {
 
 	// add to queue
 	this.line_constraints.enqueue(c);
+	System.out.println("Entered valid PerpendicularLineConstraint.");	
 
 	// extract two lines
 	Line l1 = c.operand();
@@ -288,6 +294,8 @@ public class Canvas {
 	    iter++;
 	    this.show();
 	}
+
+	System.out.println("Optimized geometry. Final error: " + error);   
     }
 
     // check if all constraints are simultaneously satisfiable
@@ -378,6 +386,7 @@ public class Canvas {
 	}
 
 	// if gets here, then there is no connection
+	System.out.println("debug");
 	return -1;
     }
 

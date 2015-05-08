@@ -13,6 +13,13 @@ public class Point implements Shape {
     private double x;
     private double y;
     private boolean highlight;
+    private static final double MAX_GRAD = 0.1;
+    private static final double LEFT = 0.0;
+    private static final double RIGHT = 2.0;
+    private static final double TOP = 1.0;
+    private static final double BOTTOM = 0.0;
+    private static final double MARGIN = 0.05;
+
 
     // initialize this point
     public Point(double x, double y) {
@@ -29,33 +36,57 @@ public class Point implements Shape {
 	    return false;		
     }
 
+    // check if inside margin
+    private boolean insideMargin() {
+	if (this.x > LEFT + MARGIN && this.x < RIGHT - MARGIN &&
+	    this.y > BOTTOM + MARGIN && this.y < TOP - MARGIN)
+	    return true;
+	return false;
+    }
+
+    // add error if close to edge
+    private double getMarginError() {
+	if (this.insideMargin()) return 0.0;
+	
+	double error = (this.x - LEFT) * (this.x - LEFT);
+	error += (this.x - RIGHT) * (this.x - RIGHT);
+	error += (this.y - BOTTOM) * (this.y - BOTTOM);
+	error += (this.y - TOP) * (this.y - TOP);
+	return error;
+    }
+
     // calculate the gradient according to a set of constraints, 
     // and move in that direction at some speed -- returns final error
     public double moveGradient(TreeSet<Constraint> constraints, double speed) {
 	
 	// get initial error
-	double initial_error = 0.0;
+	double initial_error = this.getMarginError();
 	for (Constraint c : constraints)
 	    initial_error += c.squaredError();
 
+	// only move if inside margin
+	if (!this.insideMargin()) return initial_error;
+
 	// jitter in +x direction, and calculate error
 	this.translate(0.001, 0);
-	double x_error = 0.0;
+	double x_error = this.getMarginError();
 	for (Constraint c : constraints)
 	    x_error += c.squaredError();
 	this.translate(-0.001, 0);
 
 	// jitter in +y direction, and calculate error
 	this.translate(0, 0.001);
-	double y_error = 0.0;
+	double y_error = this.getMarginError();
 	for (Constraint c : constraints)
 	    y_error += c.squaredError();
 	this.translate(0, -0.001);
 
 	// move one step in the direction of the negative gradient (descent)
+	// threshold to ensure smoothness
 	double grad_x = x_error - initial_error;
 	double grad_y = y_error - initial_error;
-
+	grad_x = Math.max(Math.min(grad_x, MAX_GRAD), -MAX_GRAD);
+	grad_y = Math.max(Math.min(grad_y, MAX_GRAD), -MAX_GRAD);
 	this.translate(speed * -grad_x, speed * -grad_y);
 
 	// compute final error
