@@ -40,10 +40,19 @@ public class ParallelLineConstraint implements Constraint {
 	return 0;
     }
 
-    // return squared error 
+    // return squared error based on cross product
     public double squaredError() {
-	return ((this.operand.slope() - this.target.slope()) *
-		(this.operand.slope() - this.target.slope()));
+	double dx_operand = this.operand.deltaX();
+	double dy_operand = this.operand.deltaY();
+	double dx_target = this.target.deltaX();
+	double dy_target = this.target.deltaY();
+	
+	double normed_cross_product = 
+	    ((dx_operand * dy_target - dy_operand * dx_target) /
+	     (this.operand.length() * this.operand.length() *
+	      this.target.length() * this.target.length()));
+
+	return normed_cross_product * normed_cross_product;
     }
 
     // execute this constraint by changing only the operand

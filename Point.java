@@ -46,13 +46,12 @@ public class Point implements Shape {
 
     // add error if close to edge
     private double getMarginError() {
-	if (this.insideMargin()) return 0.0;
-	
-	double error = (this.x - LEFT) * (this.x - LEFT);
-	error += (this.x - RIGHT) * (this.x - RIGHT);
-	error += (this.y - BOTTOM) * (this.y - BOTTOM);
-	error += (this.y - TOP) * (this.y - TOP);
-	return error;
+	double error = 1.0 / ((this.x - LEFT) * (this.x - LEFT));
+	error += 1.0 / ((this.x - RIGHT) * (this.x - RIGHT));
+	error += 1.0 / ((this.y - BOTTOM) * (this.y - BOTTOM));
+	error += 1.0 / ((this.y - TOP) * (this.y - TOP));
+	//System.out.println("Margin error = " + error);
+	return 0.0001*error;
     }
 
     // calculate the gradient according to a set of constraints, 

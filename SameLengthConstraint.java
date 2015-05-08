@@ -42,8 +42,8 @@ public class SameLengthConstraint implements Constraint {
 
     // return squared error 
     public double squaredError() {
-	return ((this.operand.length() - this.target.length()) *
-		(this.operand.length() - this.target.length()));
+	return 2.0*((this.operand.length() - this.target.length()) *
+		    (this.operand.length() - this.target.length()));
     }
 
     // execute this constraint by changing only the operand
