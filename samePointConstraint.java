@@ -40,8 +40,8 @@ public class SamePointConstraint implements Constraint {
 
     // return squared error (this one should never be called)
     public double squaredError() {
-	return (this.operand.distTo(this.target) *
-		this.operand.distTo(this.target));
+	return 100000.0 * (this.operand.distTo(this.target) *
+			   this.operand.distTo(this.target));
     }
 
     // search through every shape on the canvas and replace instances

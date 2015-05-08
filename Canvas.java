@@ -27,7 +27,7 @@ public class Canvas {
     private TreeMap<Line, TreeSet<Line>> perpendicular_lines;
 
     // constants for gradient descent optimization
-    private final double tolerance = 0.005;
+    private final double tolerance = 0.001;
     private final double delta_tolerance = 0.00005;
     private final double speed = 1.0;
 
@@ -59,6 +59,27 @@ public class Canvas {
     // add a constraint -- overloaded methods
     public void addConstraint(SamePointConstraint c) {
 	this.sp.enqueue(c);
+
+	// extract two points
+	Point p1 = c.operand();
+	Point p2 = c.target();
+
+	// add to constraint map
+	if (this.constraint_map.containsKey(p1))
+	    this.constraint_map.get(p1).add(c);
+	else {
+	    TreeSet<Constraint> set = new TreeSet<Constraint>();
+	    set.add(c);
+	    this.constraint_map.put(p1, set);
+	}
+	if (this.constraint_map.containsKey(p2))
+	    this.constraint_map.get(p2).add(c);
+	else {
+	    TreeSet<Constraint> set = new TreeSet<Constraint>();
+	    set.add(c);
+	    this.constraint_map.put(p2, set);
+	}
+
 	System.out.println("Entered valid SamePointConstraint.");
     }
     public void addConstraint(SameLengthConstraint c) {
@@ -264,28 +285,30 @@ public class Canvas {
 	    c.execute();
     }
 
-    // get error in line constraints
-    private double getLineError() {
+    // get error in constraints
+    private double getError() {
 	double error = 0.0;
 	for (Constraint c : this.line_constraints)
 	    error += c.squaredError();
-	
+	//	for (Constraint c : this.sp)
+	//  error += c.squaredError();
 	return error;
     }
 
     // optimize geometry -- full version
     public void optimizeGeometry() {
 
-	// execute SamePointConstraints
+	// handle same point constraints first
 	for (SamePointConstraint c : this.sp)
 	    c.execute();
-	
+
 	// loop until error is below threshold
 	int iter = 0;
-	double error = getLineError();
+	double error = getError();
 	double delta_error = error;
 	while (error > this.tolerance && 
-	       delta_error > this.delta_tolerance) {
+	       delta_error > this.delta_tolerance &&
+	       iter < 250) {
 	    System.out.printf("Iteration %3d: %8.6f\n", iter, error);
 
 	    for (Shape s : this.shapes) {
@@ -293,7 +316,7 @@ public class Canvas {
 		    s.moveGradient(this.constraint_map.get(s), this.speed);
 	    }
 
-	    double new_error = getLineError();
+	    double new_error = getError();
 	    delta_error = Math.abs(new_error - error);
 	    error = new_error;
 	    iter++;

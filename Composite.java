@@ -47,7 +47,38 @@ public class Composite implements Shape {
 		}
 	    }
 	}
-
+	 
+	// check the same for all points
+	Queue<Point> points = new Queue<Point>();
+	for (Shape s : this.shapes) {
+	    for (Point p : s.getPoints())
+		points.enqueue(p);
+	}
+	
+	for (Point p1 : points) {
+	    if (this.canvas.constraint_map.containsKey(p1)) {
+		for (Constraint c : this.canvas.constraint_map.get(p1)) {
+		
+		    // skip if we've seen this one before
+		    if (marked.contains(c)) continue;
+		    
+		    // only add to this.constraints if both 
+		    // target/operand in this.shapes
+		    for (Point p2 : points) {
+			if (p2.compareTo(p1) == 0) continue;
+			if (c.operand().compareTo(p2) == 0) {
+			    this.constraints.enqueue(c);
+			    marked.add(c);
+			}
+			else if (c.target().compareTo(p2) == 0) {
+			    this.constraints.enqueue(c);
+			    marked.add(c);
+			}
+		    }
+		}	    
+	    }
+	}
+	
 	System.out.printf("Copied %d shapes and %d constraints.\n", 
 			  this.shapes.size(),
 			  this.constraints.size());
