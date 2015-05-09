@@ -6,6 +6,7 @@
  * different primitives.
  ****************************************************************************/
 
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.TreeMap;
 
@@ -48,37 +49,6 @@ public class Composite implements Shape {
 	    }
 	}
 	 
-	// check the same for all points
-	Queue<Point> points = new Queue<Point>();
-	for (Shape s : this.shapes) {
-	    for (Point p : s.getPoints())
-		points.enqueue(p);
-	}
-	
-	for (Point p1 : points) {
-	    if (this.canvas.constraint_map.containsKey(p1)) {
-		for (Constraint c : this.canvas.constraint_map.get(p1)) {
-		
-		    // skip if we've seen this one before
-		    if (marked.contains(c)) continue;
-		    
-		    // only add to this.constraints if both 
-		    // target/operand in this.shapes
-		    for (Point p2 : points) {
-			if (p2.compareTo(p1) == 0) continue;
-			if (c.operand().compareTo(p2) == 0) {
-			    this.constraints.enqueue(c);
-			    marked.add(c);
-			}
-			else if (c.target().compareTo(p2) == 0) {
-			    this.constraints.enqueue(c);
-			    marked.add(c);
-			}
-		    }
-		}	    
-	    }
-	}
-	
 	System.out.printf("Copied %d shapes and %d constraints.\n", 
 			  this.shapes.size(),
 			  this.constraints.size());
@@ -91,10 +61,14 @@ public class Composite implements Shape {
 	this.canvas = canvas;
 	this.constraints = constraints;
 
+	// add shapes to canvas
+	for (Shape s : this.shapes)
+	    this.canvas.addShape(s);
+
 	// add constraints to canvas
 	for (Constraint c : this.constraints) {
-	    if (c.getClass().equals(SamePointConstraint.class))
-		this.canvas.addConstraint((SamePointConstraint) c);
+	    //	    if (c.getClass().equals(SamePointConstraint.class))
+	    //		this.canvas.addConstraint((SamePointConstraint) c);
 	    if (c.getClass().equals(SameLengthConstraint.class))
 		this.canvas.addConstraint((SameLengthConstraint) c);
 	    if (c.getClass().equals(ParallelLineConstraint.class))
@@ -103,9 +77,30 @@ public class Composite implements Shape {
 		this.canvas.addConstraint((PerpendicularLineConstraint) c);
 	}
 
-	// add shapes to canvas
-	for (Shape s : this.shapes)
-	    this.canvas.addShape(s);
+	// check for same points and add constraints
+	Queue<Point> all_points = new Queue<Point>();
+	TreeMap<Point, TreeSet<Point>> unique_points = 
+	    new TreeMap<Point, TreeSet<Point>>();
+	for (Shape s : this.shapes) {
+	    for (Point p : s.getPoints())
+		all_points.enqueue(p);
+	}
+
+	for (Point p : all_points) {
+	    if (!unique_points.containsKey(p)) 
+		unique_points.put(p, new TreeSet<Point>());
+	    else
+		unique_points.get(p).add(p); // looks weird, I know...
+	}
+
+	for (Map.Entry<Point, TreeSet<Point>> entry : unique_points.entrySet()) {
+	    Point p1 = entry.getKey();
+	    
+	    for (Point p2 : entry.getValue()) {
+		SamePointConstraint c = new SamePointConstraint(p2, p1, this.canvas);
+		this.canvas.addConstraint(c);
+	    }
+	}
 
 	System.out.printf("Copied %d shapes and %d constraints.\n", 
 			  this.shapes.size(),
@@ -158,22 +153,23 @@ public class Composite implements Shape {
 
 	// look through all constraints and duplicate with copied shapes
 	for (Constraint c : this.constraints) {
-
 	    Shape s1 = c.operand();
 	    Shape s2 = c.target();
 	    Constraint copy = null;
-
+	    
+	    /*
 	    if (c.getClass().equals(SamePointConstraint.class))
 		copy = new SamePointConstraint((Point) shape_map.get(s1), 
 					       (Point) shape_map.get(s2),
 					       this.canvas);
+	    */
 	    if (c.getClass().equals(SameLengthConstraint.class))
 		copy = new SameLengthConstraint((Line) shape_map.get(s1), 
 						(Line) shape_map.get(s2));
-	    if (c.getClass().equals(ParallelLineConstraint.class))
+	    else if (c.getClass().equals(ParallelLineConstraint.class))
 		copy = new ParallelLineConstraint((Line) shape_map.get(s1), 
 						  (Line) shape_map.get(s2));
-	    if (c.getClass().equals(PerpendicularLineConstraint.class))
+	    else if (c.getClass().equals(PerpendicularLineConstraint.class))
 		copy = new ParallelLineConstraint((Line) shape_map.get(s1), 
 						  (Line) shape_map.get(s2));
 

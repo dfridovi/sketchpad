@@ -101,7 +101,7 @@ public class Sketch {
 	// duplicate this composite, translate, and add to canvas
 	c = c.duplicate();
 	c.translate(0.1, 0.1);
-	canvas.addShape(c);
+	//	canvas.addShape(c);
     }
 
     // allow user to select a group of primitives and bundle into a composite

@@ -59,27 +59,6 @@ public class Canvas {
     // add a constraint -- overloaded methods
     public void addConstraint(SamePointConstraint c) {
 	this.sp.enqueue(c);
-
-	// extract two points
-	Point p1 = c.operand();
-	Point p2 = c.target();
-
-	// add to constraint map
-	if (this.constraint_map.containsKey(p1))
-	    this.constraint_map.get(p1).add(c);
-	else {
-	    TreeSet<Constraint> set = new TreeSet<Constraint>();
-	    set.add(c);
-	    this.constraint_map.put(p1, set);
-	}
-	if (this.constraint_map.containsKey(p2))
-	    this.constraint_map.get(p2).add(c);
-	else {
-	    TreeSet<Constraint> set = new TreeSet<Constraint>();
-	    set.add(c);
-	    this.constraint_map.put(p2, set);
-	}
-
 	System.out.println("Entered valid SamePointConstraint.");
     }
     public void addConstraint(SameLengthConstraint c) {
@@ -414,7 +393,6 @@ public class Canvas {
 	}
 
 	// if gets here, then there is no connection
-	System.out.println("debug");
 	return -1;
     }
 
