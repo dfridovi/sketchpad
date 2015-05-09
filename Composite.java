@@ -160,12 +160,23 @@ public class Composite implements Shape {
 	    shape_map.put(s, copy);
 	}
 
+	// make a duplicate set of this.shapes for quick searching
+	TreeSet<Shape> ts = new TreeSet<Shape>();
+	for (Shape s : this.shapes)
+	    ts.add(s);
+
 	// look through all constraints and duplicate with copied shapes
 	for (Constraint c : this.constraints) {
 	    Shape s1 = c.operand();
 	    Shape s2 = c.target();
 	    Constraint copy = null;
-	    
+	 
+	    // ensure that this.shapes contains s1 and s2
+	    if (!(ts.contains(s1) && ts.contains(s2))) {
+ 		System.err.println("ERROR: improper constraints.");
+		System.exit(1);
+	    }
+
 	    /*
 	    if (c.getClass().equals(SamePointConstraint.class))
 		copy = new SamePointConstraint((Point) shape_map.get(s1), 

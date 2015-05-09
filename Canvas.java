@@ -9,6 +9,7 @@
  ****************************************************************************/
 
 import java.util.TreeMap;
+import java.util.HashMap;
 import java.util.TreeSet;
 
 public class Canvas {
@@ -20,7 +21,7 @@ public class Canvas {
     // store constraints
     private Queue<SamePointConstraint> sp;
     private Queue<Constraint> line_constraints;
-    public TreeMap<Shape, TreeSet<Constraint>> constraint_map;
+    public HashMap<Shape, TreeSet<Constraint>> constraint_map;
 
     // keep a graph for parallel and perpendicular constraints
     private TreeMap<Line, TreeSet<Line>> parallel_lines;
@@ -38,7 +39,7 @@ public class Canvas {
 
 	this.sp = new Queue<SamePointConstraint>();
 	this.line_constraints = new Queue<Constraint>();
-	this.constraint_map = new TreeMap<Shape, TreeSet<Constraint>>();
+	this.constraint_map = new HashMap<Shape, TreeSet<Constraint>>();
 
 	this.parallel_lines = new TreeMap<Line, TreeSet<Line>>();
 	this.perpendicular_lines = new TreeMap<Line, TreeSet<Line>>();
