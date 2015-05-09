@@ -19,30 +19,37 @@ public class Composite implements Shape {
     
     // initialize instance variables
     public Composite(Queue<Shape> shapes, Canvas canvas) {
-	this.shapes = shapes;
+	this.shapes = new Queue<Shape>();
 	this.canvas = canvas;
 	this.constraints = new Queue<Constraint>();
 
 	// for each shape, check canvas for associated constraints
-	TreeSet<Constraint> marked = new TreeSet<Constraint>(); 
-	for (Shape s1 : this.shapes) {
+	TreeSet<Constraint> marked_constraints = new TreeSet<Constraint>(); 
+	TreeSet<Shape> marked_shapes = new TreeSet<Shape>(); 
+	for (Shape s1 : shapes) {
+
+	    // check if we've seen this shape before
+	    if (marked_shapes.contains(s1)) continue;
+	    marked_shapes.add(s1);
+	    this.shapes.enqueue(s1);
+
 	    if (this.canvas.constraint_map.containsKey(s1)) {
 		for (Constraint c : this.canvas.constraint_map.get(s1)) {
 		    
-		    // skip if we've seen this one before
-		    if (marked.contains(c)) continue;
+		    // skip if we've seen this constraint before
+		    if (marked_constraints.contains(c)) continue;
 
 		    // only add to this.constraints if both 
 		    // target/operand in this.shapes
-		    for (Shape s2 : this.shapes) {
+		    for (Shape s2 : shapes) {
 			if (s2.compareTo(s1) == 0) continue;
 			if (c.operand().compareTo(s2) == 0) {
 			    this.constraints.enqueue(c);
-			    marked.add(c);
+			    marked_constraints.add(c);
 			}
 			else if (c.target().compareTo(s2) == 0) {
 			    this.constraints.enqueue(c);
-			    marked.add(c);
+			    marked_constraints.add(c);
 			}
 		    }
 		}
@@ -146,6 +153,8 @@ public class Composite implements Shape {
 
 	// duplicate all shapes and add to shape_map
 	for (Shape s : this.shapes) {
+	    if (shape_map.containsKey(s)) 
+		continue;
 	    Shape copy = s.duplicate();
 	    dup_shapes.enqueue(copy);
 	    shape_map.put(s, copy);
@@ -170,8 +179,8 @@ public class Composite implements Shape {
 		copy = new ParallelLineConstraint((Line) shape_map.get(s1), 
 						  (Line) shape_map.get(s2));
 	    else if (c.getClass().equals(PerpendicularLineConstraint.class))
-		copy = new ParallelLineConstraint((Line) shape_map.get(s1), 
-						  (Line) shape_map.get(s2));
+		copy = new PerpendicularLineConstraint((Line) shape_map.get(s1), 
+						       (Line) shape_map.get(s2));
 
 	    dup_constraints.enqueue(copy);
 	}

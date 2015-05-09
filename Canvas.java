@@ -367,7 +367,7 @@ public class Canvas {
 	// the two lines on the parallel line graph
 	int perp_length = this.perpPathLength(l1, l2, 0, new TreeSet<Line>());
 	int para_length = this.paraPathLength(l1, l2, 0, new TreeSet<Line>());
-	
+
 	if (perp_length < 0 && para_length < 0) return true;
 	if (para_length >= 0) return false;
 	if (perp_length % 2 == 1) return true;
