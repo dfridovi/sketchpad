@@ -28,8 +28,9 @@ public class Canvas {
     private TreeMap<Line, TreeSet<Line>> perpendicular_lines;
 
     // constants for gradient descent optimization
-    private final double tolerance = 0.001;
-    private final double delta_tolerance = 0.00005;
+    private final double tolerance = 0.0001;
+    private final double delta_tolerance = 0.00001;
+    private final double max_iterations = 500;
     private final double speed = 1.0;
 
     // set up canvas
@@ -288,7 +289,7 @@ public class Canvas {
 	double delta_error = error;
 	while (error > this.tolerance && 
 	       delta_error > this.delta_tolerance &&
-	       iter < 250) {
+	       iter < this.max_iterations) {
 	    System.out.printf("Iteration %3d: %8.6f\n", iter, error);
 
 	    for (Shape s : this.shapes) {
