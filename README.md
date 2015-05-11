@@ -1,18 +1,17 @@
 # sketchpad
 ## A demo for Ivan Sutherland's SKETCHPAD, in Java
-### David Fridovich-Keil
-### ELE 583 (Spring 2015) 
+### David Fridovich-Keil, ELE 583 (Spring 2015) 
 
 
 To build:
 
-> git clone https://github.com/dfridovi/sketchpad
+> $ git clone https://github.com/dfridovi/sketchpad
 
-> javac Sketch.java
+> $ javac Sketch.java
 
 To run:
 
-> java Sketch
+> $ java Sketch
 
 
 User's guide:
